@@ -20,7 +20,7 @@ public class Complex {
         } else if (re < 0) {
             return Math.PI;
         } else
-            throw new IllegalArgumentException("Re(this) and Im(this) cannot both be equal to 0");
+            return 0;
     }
 
     /**
