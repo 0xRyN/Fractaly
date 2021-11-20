@@ -3,14 +3,10 @@ package org.fractaly;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import org.fractaly.screens.Fractal;
-import org.fractaly.utils.Complex;
 
 /**
  * JavaFX App
