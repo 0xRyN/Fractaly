@@ -2,23 +2,26 @@ package org.fractaly;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import org.fractaly.screens.Fractal;
+import org.fractaly.utils.Complex;
 
 /**
  * JavaFX App
  */
 public class App extends Application {
-
     @Override
     public void start(Stage stage) {
-        var javaVersion = SystemInfo.javaVersion();
-        var javafxVersion = SystemInfo.javafxVersion();
+        Fractal f = Fractal.buildJulia(1000, 1000);
+        ImageView v = new ImageView(f);
 
-        var label = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-        var scene = new Scene(new StackPane(label), 640, 480);
+        var scene = new Scene(new StackPane(v), 1000, 1000);
         stage.setScene(scene);
         stage.show();
     }
