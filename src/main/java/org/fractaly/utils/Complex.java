@@ -20,7 +20,7 @@ public class Complex {
         } else if (re < 0) {
             return Math.PI;
         } else
-            throw new IllegalArgumentException("Re(z) and Im(z) cannot both be equal to 0");
+            throw new IllegalArgumentException("Re(this) and Im(this) cannot both be equal to 0");
     }
 
     /**
@@ -45,7 +45,6 @@ public class Complex {
      * @param im Imaginary part Im(z)
      * @return The complex number z
      */
-
     public static Complex build(double re, double im) {
         double mod = mod(re, im);
         double arg = arg(re, im, mod);
@@ -83,7 +82,7 @@ public class Complex {
      * Computes the conjugate of the number. The conjugate of a complex number is
      * itself while inverting the imaginary part.
      * 
-     * conjugate(z) = Complex(z.re, -z.im)
+     * conjugate(this) = Complex(this.re, -this.im)
      * 
      * @return The conjugate of this.
      */
@@ -145,6 +144,24 @@ public class Complex {
      */
     public double getRe() {
         return re;
+    }
+
+    /**
+     * Returns the angle Arg(this) in radians of this.
+     * 
+     * @return A double containing Arg(this) in radians
+     */
+    public double getArg() {
+        return arg;
+    }
+
+    /**
+     * Returns the length / modulo Mod(this) of this.
+     * 
+     * @return A double containing Mod(this)
+     */
+    public double getMod() {
+        return mod;
     }
 
     @Override
