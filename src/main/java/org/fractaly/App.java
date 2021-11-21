@@ -7,6 +7,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import org.fractaly.screens.Fractal;
+import org.fractaly.utils.Complex;
 
 /**
  * JavaFX App
@@ -14,7 +15,7 @@ import org.fractaly.screens.Fractal;
 public class App extends Application {
     @Override
     public void start(Stage stage) {
-        Fractal f = Fractal.buildJulia(1000, 1000);
+        Fractal f = Fractal.buildJulia(1000, 1000, 1000, Complex.build(-0.4, 0.6));
         ImageView v = new ImageView(f);
 
         var scene = new Scene(new StackPane(v), 1000, 1000);
