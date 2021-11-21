@@ -1,5 +1,6 @@
 package org.fractaly.utils;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import javafx.scene.image.PixelWriter;
@@ -7,16 +8,39 @@ import javafx.scene.paint.Color;
 
 public class Julia {
 
-    private Julia() {
+    private final PixelWriter pWriter;
+    private final int w;
+    private final int h;
+    private final int maxIter;
+    private final Function<Complex, Complex> juliaFunction;
+    private final BiFunction<Integer, Integer, Color> colorFunction;
+
+    private Julia(PixelWriter pWriter, int w, int h, int maxIter, Function<Complex, Complex> juliaFunction,
+            BiFunction<Integer, Integer, Color> colorFunction) {
+        this.pWriter = pWriter;
+        this.w = w;
+        this.h = h;
+        this.maxIter = maxIter;
+        this.juliaFunction = juliaFunction;
+        this.colorFunction = colorFunction;
     }
 
-    private static void iterate(PixelWriter p, Complex z, Function<Complex, Complex> f, int i, int j, int maxIter) {
+    private void iterate(int i, int j, Complex z) {
         int iter = 0;
-        while (z.getMod() < 2 && iter < maxIter) {
-            z = f.apply(z);
+        while (z.getMod() < 2 && iter < this.maxIter) {
+            z = juliaFunction.apply(z);
             iter++;
         }
-        p.setColor(i, j, Color.hsb(((255 * iter / maxIter) % 360), 1, iter < maxIter ? 1 : 0));
+        this.pWriter.setColor(i, j, colorFunction.apply(iter, this.maxIter));
+    }
+
+    private void compute() {
+        for (int i = 0; i < this.w; i++) {
+            for (int j = 0; j < this.h; j++) {
+                Complex z = Complex.build(-1 + i * (2.0 / this.w), -1 + j * (2.0 / this.h));
+                iterate(i, j, z);
+            }
+        }
     }
 
     /**
@@ -30,12 +54,9 @@ public class Julia {
      *                pixel
      * @param f       The Julia Function<Complex, Complex> to apply
      */
-    public static void compute(PixelWriter p, int w, int h, int maxIter, Function<Complex, Complex> f) {
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
-                Complex z = Complex.build(-1 + i * (2.0 / w), -1 + j * (2.0 / h));
-                iterate(p, z, f, i, j, maxIter);
-            }
-        }
+    public static void build(PixelWriter pWriter, int w, int h, int maxIter, Function<Complex, Complex> juliaFunction,
+            BiFunction<Integer, Integer, Color> colorFunction) {
+        Julia func = new Julia(pWriter, w, h, maxIter, juliaFunction, colorFunction);
+        func.compute();
     }
 }

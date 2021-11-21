@@ -129,6 +129,19 @@ public class Complex {
     }
 
     /**
+     * Builds and returns a complex number from polar coordinates
+     * 
+     * @param mod double Modulus : Modulus of the complex number
+     * @param arg double Argument : Argument of the complex number (in radians)
+     * @return The corresponding complex number
+     */
+    public static Complex fromPolar(double mod, double arg) {
+        double r = mod * Math.cos(arg);
+        double i = mod * Math.sin(arg);
+        return Complex.build(r, i);
+    }
+
+    /**
      * Returns the imaginary part of the complex number this.
      * 
      * @return A double containing the imaginary part of this
