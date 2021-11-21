@@ -2,75 +2,61 @@ package org.fractaly.screens;
 
 import javafx.scene.image.WritableImage;
 
+import java.util.function.Function;
+
 import org.fractaly.utils.Complex;
 import org.fractaly.utils.Julia;
 
 public class Fractal extends WritableImage {
-    private Fractal(int w, int h) {
+
+    private final int w; // Required
+    private final int h; // Required
+    private final int maxIter; // Optional
+    private final Function<Complex, Complex> f; // Optional
+
+    private Fractal(int w, int h, int maxIter, Function<Complex, Complex> f) {
         super(w, h);
+        this.w = w;
+        this.h = h;
+        this.maxIter = maxIter;
+        this.f = f;
     }
 
-    /**
-     * Builds and returns a Fractal. A Fractal is a WritableImage which pixels have
-     * been computed to display a Julia fractal. Julia parameters : c = -0.7 +
-     * 0.27015i, max iterations = 300
-     * 
-     * @param w int width : width of the fractal (in pixels)
-     * @param h int height : height of the fractal (in pixels)
-     * @return Returns a new Fractal (A fractal is a WritableImage)
-     */
-    public static Fractal buildJulia(int w, int h) {
-        Fractal x = new Fractal(w, h);
-        int maxIter = 300;
-        Complex c = Complex.build(-0.7, 0.27015);
-        try {
-            Julia.compute(x.getPixelWriter(), w, h, maxIter, c);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return x;
-    }
+    public static class Builder {
 
-    /**
-     * Builds and returns a Fractal. A Fractal is a WritableImage which pixels have
-     * been computed to display a Julia fractal. Julia parameters : c = -0.7 +
-     * 0.27015i
-     * 
-     * @param w       int width : width of the fractal (in pixels)
-     * @param h       int height : height of the fractal (in pixels)
-     * @param maxIter int maxIter : maximum number of Julia iterations
-     * @return Returns a new Fractal (A fractal is a WritableImage)
-     */
-    public static Fractal buildJulia(int w, int h, int maxIter) {
-        Fractal x = new Fractal(w, h);
-        Complex c = Complex.build(-0.7, 0.27015);
-        try {
-            Julia.compute(x.getPixelWriter(), w, h, maxIter, c);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return x;
-    }
+        private final int w; // Required
+        private final int h; // Required
+        private int maxIter; // Optional
+        private Function<Complex, Complex> f; // Optional
 
-    /**
-     * Builds and returns a Fractal. A Fractal is a WritableImage which pixels have
-     * been computed to display a Julia fractal. This version of the functions lets
-     * you chose the c complex.
-     * 
-     * @param w       int width : width of the fractal (in pixels)
-     * @param h       int height : height of the fractal (in pixels)
-     * @param maxIter int maxIter : maximum number of Julia iterations
-     * @param c       Complex c : the complex to use in the Julia set
-     * @return Returns a new Fractal (A fractal is a WritableImage)
-     */
-    public static Fractal buildJulia(int w, int h, int maxIter, Complex c) {
-        Fractal x = new Fractal(w, h);
-        try {
-            Julia.compute(x.getPixelWriter(), w, h, maxIter, c);
-        } catch (Exception e) {
-            e.printStackTrace();
+        /**
+         * 
+         * @param w REQ int width :
+         * @param h
+         */
+        public Builder(int w, int h) {
+            this.w = w;
+            this.h = h;
+            this.maxIter = 300;
+            this.f = z -> z.multiply(z).add(Complex.build(-0.7, 0.27015));
         }
-        return x;
+
+        public Builder maxIter(int maxIter) {
+            this.maxIter = maxIter;
+            return this;
+        }
+
+        public Builder function(Function<Complex, Complex> f) {
+            this.f = f;
+            return this;
+        }
+
+        public Fractal build() {
+            Fractal res = new Fractal(this.w, this.h, this.maxIter, this.f);
+            Julia.compute(res.getPixelWriter(), this.w, this.h, this.maxIter, this.f);
+            return res;
+        }
+
     }
 
 }
