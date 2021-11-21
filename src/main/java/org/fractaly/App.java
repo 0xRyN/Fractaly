@@ -30,8 +30,8 @@ import org.fractaly.utils.Complex;
  */
 public class App extends Application {
 
-    public static final int WIDTH = 500;
-    public static final int HEIGHT = 500;
+    public static final int WIDTH = 1000;
+    public static final int HEIGHT = 1000;
     public static ImageView v;
     public static LinkedList<Fractal> l;
 
@@ -46,11 +46,12 @@ public class App extends Application {
 
     public static void beautiful() {
         l = new LinkedList<>();
+        BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
         // 0.7885
         for (int i = 0; i < 360; i++) {
             Complex c = Complex.fromPolar(0.7885, Math.toRadians(i));
             Function<Complex, Complex> f = x -> x.multiply(x).add(c);
-            l.add(new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(f).build());
+            l.add(new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(f).colorFunction(color).build());
             System.out.println(i);
         }
         v.setImage(l.getFirst());
