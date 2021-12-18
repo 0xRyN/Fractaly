@@ -28,6 +28,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 /**
  * JavaFX App
@@ -65,12 +66,30 @@ public class App extends Application {
         stage.show();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         Options options = new Options();
-        for (String s : args) {
-            System.out.println(s);
+        options.addOption("complex", true, "Add Complexe(re,img)")
+                .addOption("g", "gui", false, "Show GUI Application");
+
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("CLITester", options);
+
+
+        // ***Parsing Stage***
+        // Create a parser
+        CommandLineParser parser = new DefaultParser();
+
+        // parse the options passed as command line arguments
+        CommandLine cmd = parser.parse(options, args);
+
+        // ***Interrogation Stage***
+        // hasOptions checks if option is present or not
+        if (cmd.hasOption("complex")) {
+            System.out.println("Complexe");
+        } else if (cmd.hasOption("g")) {
+            launch();
         }
-        launch();
+        
     }
 
 }
