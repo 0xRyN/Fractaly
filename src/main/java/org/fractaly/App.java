@@ -9,6 +9,13 @@ import javafx.stage.Stage;
 import org.fractaly.screens.Fractal;
 import org.fractaly.utils.Complex;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+
 /**
  * JavaFX App
  */
@@ -24,6 +31,10 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
+        Options options = new Options();
+        for (String s : args) {
+            System.out.println(s);
+        }
         launch();
     }
 
