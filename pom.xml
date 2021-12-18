@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.fractaly</groupId>
     <artifactId>Fractaly</artifactId>
-    <version>1.0-SNAPSHOT</version>
+   <version>1.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>16</maven.compiler.source>
@@ -24,6 +24,16 @@
              <artifactId>javafx-fxml</artifactId>
              <version>13</version>
          </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>13.0.1</version>
+            </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>13.0.1</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
