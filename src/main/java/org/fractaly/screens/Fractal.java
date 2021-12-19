@@ -1,76 +1,146 @@
 package org.fractaly.screens;
 
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 
+import java.util.concurrent.ForkJoinPool;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+import org.fractaly.model.ComputeFractal;
 import org.fractaly.utils.Complex;
 import org.fractaly.utils.Julia;
 
 public class Fractal extends WritableImage {
-    private Fractal(int w, int h) {
+
+    private final int w; // Required
+    private final int h; // Required
+    private final int maxIter; // Optional
+    private final double zoom; // Optional
+    private final Function<Complex, Complex> juliaFunction; // Optional
+    private final BiFunction<Integer, Integer, Color> colorFunction;
+
+    private Fractal(int w, int h, int maxIter, double zoom, Function<Complex, Complex> juliaFunction,
+            BiFunction<Integer, Integer, Color> colorFunction) {
         super(w, h);
+        this.w = w;
+        this.h = h;
+        this.maxIter = maxIter;
+        this.zoom = zoom;
+        this.juliaFunction = juliaFunction;
+        this.colorFunction = colorFunction;
     }
 
-    /**
-     * Builds and returns a Fractal. A Fractal is a WritableImage which pixels have
-     * been computed to display a Julia fractal. Julia parameters : c = -0.7 +
-     * 0.27015i, max iterations = 300
-     * 
-     * @param w int width : width of the fractal (in pixels)
-     * @param h int height : height of the fractal (in pixels)
-     * @return Returns a new Fractal (A fractal is a WritableImage)
-     */
-    public static Fractal buildJulia(int w, int h) {
-        Fractal x = new Fractal(w, h);
-        int maxIter = 300;
-        Complex c = Complex.build(-0.7, 0.27015);
-        try {
-            Julia.compute(x.getPixelWriter(), w, h, maxIter, c);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return x;
+    public int getMaxIter() {
+        return maxIter;
     }
 
-    /**
-     * Builds and returns a Fractal. A Fractal is a WritableImage which pixels have
-     * been computed to display a Julia fractal. Julia parameters : c = -0.7 +
-     * 0.27015i
-     * 
-     * @param w       int width : width of the fractal (in pixels)
-     * @param h       int height : height of the fractal (in pixels)
-     * @param maxIter int maxIter : maximum number of Julia iterations
-     * @return Returns a new Fractal (A fractal is a WritableImage)
-     */
-    public static Fractal buildJulia(int w, int h, int maxIter) {
-        Fractal x = new Fractal(w, h);
-        Complex c = Complex.build(-0.7, 0.27015);
-        try {
-            Julia.compute(x.getPixelWriter(), w, h, maxIter, c);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return x;
+    public int getW() {
+        return w;
     }
 
-    /**
-     * Builds and returns a Fractal. A Fractal is a WritableImage which pixels have
-     * been computed to display a Julia fractal. This version of the functions lets
-     * you chose the c complex.
-     * 
-     * @param w       int width : width of the fractal (in pixels)
-     * @param h       int height : height of the fractal (in pixels)
-     * @param maxIter int maxIter : maximum number of Julia iterations
-     * @param c       Complex c : the complex to use in the Julia set
-     * @return Returns a new Fractal (A fractal is a WritableImage)
-     */
-    public static Fractal buildJulia(int w, int h, int maxIter, Complex c) {
-        Fractal x = new Fractal(w, h);
-        try {
-            Julia.compute(x.getPixelWriter(), w, h, maxIter, c);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public int getH() {
+        return h;
+    }
+
+    public double getZoom() {
+        return zoom;
+    }
+
+    public BiFunction<Integer, Integer, Color> getColorFunction() {
+        return colorFunction;
+    }
+
+    public Function<Complex, Complex> getJuliaFunction() {
+        return juliaFunction;
+    }
+
+    public static class Builder {
+
+        private final int w; // Required
+        private final int h; // Required
+        private int maxIter; // Optional
+        private double zoom; // Optional
+        private Function<Complex, Complex> juliaFunction; // Optional
+        private BiFunction<Integer, Integer, Color> colorFunction; // Optional
+
+        /**
+         * Initialize a Fractal Builder. You can chain commands like : new
+         * Fractal.Builder(100, 100).maxIter(120).julia(f)
+         * 
+         * At the end of the builder, after you have passed in all arguments, you can
+         * call build() to return an object of type Fractal.
+         * 
+         * @see Fractal
+         * @param w REQ int width : width of the Fractal
+         * @param h REQ int height : height of the Fractal
+         */
+        public Builder(int w, int h) {
+            this.w = w;
+            this.h = h;
+            this.maxIter = 50; // Default values
+            this.zoom = 1.0;
+            this.juliaFunction = z -> z.multiply(z).add(Complex.build(-0.7, 0.27015)); // Default values
+            this.colorFunction = (i, maxI) -> Color.hsb((255 * i / maxI) % 360, 1, i < maxI ? 1 : 0); // Default values
         }
-        return x;
+
+        /**
+         * Setter for the Builder. Sets up the maxIter variable for the julia function.
+         * 
+         * @param maxIter The maximum number of iterations of the Julia function
+         * @return Builder, you can continue piping commands.
+         */
+        public Builder maxIter(int maxIter) {
+            this.maxIter = maxIter;
+            return this;
+        }
+
+        /**
+         * Setter for the Builder. Sets up the maxIter variable for the julia function.
+         * 
+         * @param maxIter The maximum number of iterations of the Julia function
+         * @return Builder, you can continue piping commands.
+         */
+        public Builder zoom(double zoom) {
+            this.zoom = zoom;
+            return this;
+        }
+
+        /**
+         * Setter for the Builder. Sets up the julia function variable.
+         * 
+         * @param f The julia Function<Complex, Complex> to use when computing the
+         *          fractals. You can use a lambda, ie : c -> z.multiply(z).add(c)
+         * @return Builder, you can continue piping commands.
+         */
+        public Builder juliaFunction(Function<Complex, Complex> juliaFunction) {
+            this.juliaFunction = juliaFunction;
+            return this;
+        }
+
+        public Builder colorFunction(BiFunction<Integer, Integer, Color> colorFunction) {
+            this.colorFunction = colorFunction;
+            return this;
+        }
+
+        /**
+         * After setting up all optional arguments, you can call build() to return the
+         * corresponding fractal. It will be all set up, you will just need to display
+         * it.
+         * 
+         * @return Fractal f, the corresponding fractal
+         */
+        public Fractal buildJulia() {
+            Fractal res = new Fractal(this.w, this.h, this.maxIter, this.zoom, this.juliaFunction, this.colorFunction);
+            // Julia.build(res.getPixelWriter(), this.w, this.h, this.maxIter,
+            // this.juliaFunction, this.colorFunction);
+            // return res;
+            ForkJoinPool pool = new ForkJoinPool();
+            ComputeFractal f = new ComputeFractal(0, w * h, res);
+            pool.invoke(f);
+            return res;
+        }
+
     }
 
 }
