@@ -63,17 +63,19 @@ public class App extends Application {
         }
     }
 
-    public void zoomIn(boolean isMandelbrot) {
+    public void zoomIn(Fractal fract) {
         Instant before = Instant.now();
         zoomFactor += 0.1;
+        Fractal.Builder newBuilder = new Fractal.Builder(fract).zoom(zoomFactor);
         Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(0, -0.8)); // Fonction Julia
         BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
         Builder build =  new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(zoomFactor);
         Fractal f = null;
-        if(isMandelbrot){
+        if(fract.isMandelbrot()){
             f = build.buildMandelbrot();
         }else{
-            f = build.buildJulia();
+
+            f = newBuilder.buildJulia();
         }
         v.setImage(f);
         Duration d = Duration.between(before, Instant.now());
@@ -96,20 +98,23 @@ public class App extends Application {
                 julia = c -> c.multiply(c).add(Complex.build(getX, getY));
                 f = build.juliaFunction(julia).buildJulia();
                 v = new ImageView(f);
+                final Fractal fract = f;
                 v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        zoomIn(false);
+                        
+                        zoomIn(fract);
                     }
                 });
                 break;
             default: case "m":
                 f = build.buildMandelbrot();
                 v = new ImageView(f);
+                final Fractal fractal = f;
                 v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        zoomIn(true);
+                        zoomIn(fractal);
                     }
                 });
                 break;
@@ -185,7 +190,7 @@ public class App extends Application {
                         Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y)); 
                         fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia(); 
 
-                        File outputFile = new File("julia_x"+x+"_y"+y);
+                        File outputFile = new File("julia");
                         ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                         System.out.println("An image was created: "+outputFile.getName());
                     }
