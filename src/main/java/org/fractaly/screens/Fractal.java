@@ -18,9 +18,10 @@ public class Fractal extends WritableImage {
     private final double zoom; // Optional
     private final Function<Complex, Complex> juliaFunction; // Optional
     private final BiFunction<Integer, Integer, Color> colorFunction;
+    private final boolean isMandelbrot;
 
     private Fractal(int w, int h, int maxIter, double zoom, Function<Complex, Complex> juliaFunction,
-            BiFunction<Integer, Integer, Color> colorFunction) {
+            BiFunction<Integer, Integer, Color> colorFunction, boolean isMandelbrot) {
         super(w, h);
         this.w = w;
         this.h = h;
@@ -28,6 +29,7 @@ public class Fractal extends WritableImage {
         this.zoom = zoom;
         this.juliaFunction = juliaFunction;
         this.colorFunction = colorFunction;
+        this.isMandelbrot = isMandelbrot;
     }
 
     public int getMaxIter() {
@@ -44,6 +46,10 @@ public class Fractal extends WritableImage {
 
     public double getZoom() {
         return zoom;
+    }
+
+    public boolean isMandelbrot() {
+        return isMandelbrot;
     }
 
     public BiFunction<Integer, Integer, Color> getColorFunction() {
@@ -77,7 +83,7 @@ public class Fractal extends WritableImage {
         public Builder(int w, int h) {
             this.w = w;
             this.h = h;
-            this.maxIter = 50; // Default values
+            this.maxIter = 100; // Default values
             this.zoom = 1.0;
             this.juliaFunction = z -> z.multiply(z).add(Complex.build(-0.7, 0.27015)); // Default values
             this.colorFunction = (i, maxI) -> Color.hsb((255 * i / maxI) % 360, 1, i < maxI ? 1 : 0); // Default values
@@ -130,7 +136,24 @@ public class Fractal extends WritableImage {
          * @return Fractal f, the corresponding fractal
          */
         public Fractal buildJulia() {
-            Fractal res = new Fractal(this.w, this.h, this.maxIter, this.zoom, this.juliaFunction, this.colorFunction);
+            Fractal res = new Fractal(this.w, this.h, this.maxIter, this.zoom, this.juliaFunction, this.colorFunction,
+                    false);
+            ForkJoinPool pool = new ForkJoinPool();
+            ComputeFractal f = new ComputeFractal(0, w * h, res);
+            pool.invoke(f);
+            return res;
+        }
+
+        /**
+         * After setting up all optional arguments, you can call build() to return the
+         * corresponding fractal. It will be all set up, you will just need to display
+         * it.
+         * 
+         * @return Fractal f, the corresponding fractal
+         */
+        public Fractal buildMandelbrot() {
+            Fractal res = new Fractal(this.w, this.h, this.maxIter, this.zoom, this.juliaFunction, this.colorFunction,
+                    true);
             ForkJoinPool pool = new ForkJoinPool();
             ComputeFractal f = new ComputeFractal(0, w * h, res);
             pool.invoke(f);
