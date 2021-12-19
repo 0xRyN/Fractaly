@@ -66,7 +66,7 @@ public class App extends Application {
         Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(0, -0.8)); // Fonction Julia
         BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
         Fractal f = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(zoomFactor)
-                .buildJulia();
+                .buildMandelbrot();
         v.setImage(f);
         Duration d = Duration.between(before, Instant.now());
         System.out.println(d.toString());
@@ -76,7 +76,8 @@ public class App extends Application {
     public void start(Stage stage) {
         Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(0, -0.8)); // Fonction Julia
         BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
-        Fractal f = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1).buildJulia();
+        Fractal f = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1)
+                .buildMandelbrot();
         v = new ImageView(f);
         v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override

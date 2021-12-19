@@ -5,6 +5,7 @@ import java.util.concurrent.RecursiveAction;
 import org.fractaly.screens.Fractal;
 import org.fractaly.utils.Complex;
 import org.fractaly.utils.Julia;
+import org.fractaly.utils.Mandelbrot;
 
 public class ComputeFractal extends RecursiveAction {
 
@@ -43,7 +44,13 @@ public class ComputeFractal extends RecursiveAction {
             double zi = (-1 + i * (2.0 / this.w)) / zoom;
             double zj = (-1 + j * (2.0 / this.h)) / zoom;
             Complex z = Complex.build(zi, zj);
-            int iter = Julia.compute(fractal.getMaxIter(), z, fractal.getJuliaFunction());
+            int iter = 0;
+
+            if (fractal.isMandelbrot()) {
+                iter = Mandelbrot.compute(fractal.getMaxIter(), z);
+            } else {
+                iter = Julia.compute(fractal.getMaxIter(), z, fractal.getJuliaFunction());
+            }
             fractal.getPixelWriter().setColor(i, j, fractal.getColorFunction().apply(iter, this.fractal.getMaxIter()));
         }
     }
