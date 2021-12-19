@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Scanner;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -60,6 +61,8 @@ public class App extends Application {
         }
     }
 
+  
+
     public void zoomIn() {
         Instant before = Instant.now();
         zoomFactor += 0.1;
@@ -78,6 +81,11 @@ public class App extends Application {
         BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
         Fractal f = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1)
                 .buildMandelbrot();
+        try {
+            saveImageFile(f, stage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         v = new ImageView(f);
         v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
@@ -91,13 +99,13 @@ public class App extends Application {
         stage.show();
     }
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, IOException {
         Options options = new Options();
-        options.addOption("complex", true, "Add Complexe(re,img)")
-                .addOption("g", "gui", false, "Show GUI Application");
+        options.addRequiredOption("f", "function", true, "MandelBrot | Julia ");
+        options.addRequiredOption("m", "mode", true, "terminal | gui");
 
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("CLITester", options);
+        formatter.printHelp("CLITester", options, true);
 
         // ***Parsing Stage***
         // Create a parser
@@ -108,11 +116,41 @@ public class App extends Application {
 
         // ***Interrogation Stage***
         // hasOptions checks if option is present or not
-        if (cmd.hasOption("complex")) {
-            System.out.println("Complexe");
-        } else if (cmd.hasOption("g")) {
-            launch();
+        String getopt = "";
+        Fractal fract;
+        WritableImage writableImage;
+        
+        if (cmd.hasOption("m")) {
+            getopt = cmd.getOptionValue("m");
+            if(getopt.equals("gui")){
+                launch();
+            }
+            if(getopt.equals("terminal")){
+                System.out.println("Bienvenue dans la version Terminale");
+
+                try (Scanner sc = new Scanner(System.in)) {
+                    System.out.println("Entrez X:");
+                    String xa = sc.nextLine();
+                    final Double x = Double.parseDouble(xa);
+                    System.out.println("Entrez Y:");
+                    String ya = sc.nextLine();
+                    final double y = Double.parseDouble(ya);
+                    Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y)); // Fonction Julia
+                    BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7,
+                            0.7);
+                    getopt = cmd.getOptionValue("f");
+                    if(getopt.equals("MandelBrot")){
+                       fract = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1).buildMandelbrot();
+                    }else{
+                        fract = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1).buildJulia(); 
+                    }
+                    File outputFile = new File("image");
+                    ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
+                }
+                
+            }
         }
+        
 
     }
 
