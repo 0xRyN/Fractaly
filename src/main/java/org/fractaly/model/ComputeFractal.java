@@ -8,7 +8,7 @@ import org.fractaly.utils.Julia;
 
 public class ComputeFractal extends RecursiveAction {
 
-    // If image is less than 100x100 = 10000, compute it directly
+    // If image is less or equal to 100x100 = 10000, compute it directly
     private final int threshold = 10000;
     private final int start;
     private final int size;
@@ -29,7 +29,7 @@ public class ComputeFractal extends RecursiveAction {
     }
 
     protected void computeDirectly() {
-        for (int k = start; k < size; k++) {
+        for (int k = start; k < start + size; k++) {
             /*
              * HOW IT WORKS
              * Size = width * height.
@@ -52,14 +52,18 @@ public class ComputeFractal extends RecursiveAction {
     // https://docs.oracle.com/javase/tutorial/essential/concurrency/examples/ForkBlur.java
     @Override
     protected void compute() {
-        System.out.println("Thread no : " + threads + " - Start : " + start + ", End : " + (start + size));
-        if (size >= threshold) {
-            int split = size / 2;
-            ComputeFractal left = new ComputeFractal(start, split, fractal);
-            ComputeFractal right = new ComputeFractal(start + split, size - split, fractal);
-            invokeAll(left, right);
+        // System.out.println("Thread no : " + threads + " - Start : " + start + ", End
+        // : " + (start + size));
+        if (size <= threshold) {
+            computeDirectly();
+            return;
+
         }
-        computeDirectly();
+        int split = size / 2;
+        ComputeFractal left = new ComputeFractal(start, split, fractal);
+        ComputeFractal right = new ComputeFractal(start + split, size - split, fractal);
+        invokeAll(left, right);
+
     }
 
 }

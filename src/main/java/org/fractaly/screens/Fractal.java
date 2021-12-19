@@ -9,7 +9,6 @@ import java.util.function.Function;
 
 import org.fractaly.model.ComputeFractal;
 import org.fractaly.utils.Complex;
-import org.fractaly.utils.Julia;
 
 public class Fractal extends WritableImage {
 
@@ -132,9 +131,6 @@ public class Fractal extends WritableImage {
          */
         public Fractal buildJulia() {
             Fractal res = new Fractal(this.w, this.h, this.maxIter, this.zoom, this.juliaFunction, this.colorFunction);
-            // Julia.build(res.getPixelWriter(), this.w, this.h, this.maxIter,
-            // this.juliaFunction, this.colorFunction);
-            // return res;
             ForkJoinPool pool = new ForkJoinPool();
             ComputeFractal f = new ComputeFractal(0, w * h, res);
             pool.invoke(f);
