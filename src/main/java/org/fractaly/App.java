@@ -1,9 +1,6 @@
 package org.fractaly;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -11,20 +8,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalTime;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.fractaly.screens.Fractal;
 import org.fractaly.utils.Complex;
-import org.fractaly.utils.Julia;
 
 /**
  * JavaFX App
@@ -34,7 +24,7 @@ public class App extends Application {
     private static final int WIDTH = 1000;
     private static final int HEIGHT = 1000;
     private ImageView v;
-    public double zoomFactor = 1.0;
+    private double zoomFactor = 1.0;
 
     public void zoomIn() {
         Instant before = Instant.now();
