@@ -61,13 +61,18 @@ public class App extends Application {
         }
     }
 
-    public void zoomIn() {
+    public void zoomIn(boolean isMandelbrot) {
         Instant before = Instant.now();
         zoomFactor += 0.1;
         Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(0, -0.8)); // Fonction Julia
         BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
-        Fractal f = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(zoomFactor)
-                .buildMandelbrot();
+        Builder build =  new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(zoomFactor);
+        Fractal f = null;
+        if(isMandelbrot){
+            f = build.buildMandelbrot();
+        }else{
+            f = build.buildJulia();
+        }
         v.setImage(f);
         Duration d = Duration.between(before, Instant.now());
         System.out.println(d.toString());
@@ -84,32 +89,33 @@ public class App extends Application {
         Builder build = new Fractal.Builder(WIDTH, HEIGHT);
         Fractal f = null;
 
-        
         switch(getFunction){
             case "Julia":
                 julia = c -> c.multiply(c).add(Complex.build(getX, getY));
                 f = build.juliaFunction(julia).buildJulia();
+                v = new ImageView(f);
+                v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        zoomIn(false);
+                    }
+                });
                 break;
             default: case "MandelBrot":
                 f = build.buildMandelbrot();
+                v = new ImageView(f);
+                v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        zoomIn(true);
+                    }
+                });
                 break;
         }
-
-        v = new ImageView(f);
-        v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                zoomIn();
-            }
-        });
-
         var scene = new Scene(new StackPane(v), 1000, 1000);
         stage.setScene(scene);
         stage.show();
-
-
     }
-
     public static void main(String[] args) throws ParseException, IOException {
         Options options = new Options();
         options.addRequiredOption("f", "function", true, "MandelBrot | Julia ");
