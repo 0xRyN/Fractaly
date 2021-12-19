@@ -2,10 +2,10 @@ package org.fractaly.model;
 
 import java.util.concurrent.RecursiveAction;
 
-import org.fractaly.screens.Fractal;
 import org.fractaly.utils.Complex;
 import org.fractaly.utils.Julia;
 import org.fractaly.utils.Mandelbrot;
+import org.fractaly.view.Fractal;
 
 public class ComputeFractal extends RecursiveAction {
 

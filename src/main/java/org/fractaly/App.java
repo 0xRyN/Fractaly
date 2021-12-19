@@ -27,8 +27,8 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.fractaly.screens.Fractal;
 import org.fractaly.utils.Complex;
+import org.fractaly.view.Fractal;
 
 /**
  * JavaFX App
@@ -39,7 +39,7 @@ public class App extends Application {
     private static final int HEIGHT = 1000;
     private ImageView v;
     private double zoomFactor = 1.0;
-    
+
     private static void saveImageFile(WritableImage writableImage, Stage stage) throws IOException {
         FileChooser fileChooser = new FileChooser();
 
@@ -56,7 +56,7 @@ public class App extends Application {
                 file = new File(file.getAbsolutePath() + ".png");
             }
 
-            ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null),"png", file);
+            ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), "png", file);
         }
     }
 
@@ -91,14 +91,13 @@ public class App extends Application {
         stage.show();
     }
 
-     public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException {
         Options options = new Options();
         options.addOption("complex", true, "Add Complexe(re,img)")
                 .addOption("g", "gui", false, "Show GUI Application");
 
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("CLITester", options);
-
 
         // ***Parsing Stage***
         // Create a parser
@@ -114,7 +113,7 @@ public class App extends Application {
         } else if (cmd.hasOption("g")) {
             launch();
         }
-        
+
     }
 
 }

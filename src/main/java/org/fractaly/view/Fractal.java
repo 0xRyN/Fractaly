@@ -1,4 +1,4 @@
-package org.fractaly.screens;
+package org.fractaly.view;
 
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
