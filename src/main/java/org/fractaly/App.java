@@ -26,6 +26,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.fractaly.utils.Complex;
@@ -90,7 +92,7 @@ public class App extends Application {
         Fractal f = null;
 
         switch(getFunction){
-            case "Julia":
+            case "j":
                 julia = c -> c.multiply(c).add(Complex.build(getX, getY));
                 f = build.juliaFunction(julia).buildJulia();
                 v = new ImageView(f);
@@ -101,7 +103,7 @@ public class App extends Application {
                     }
                 });
                 break;
-            default: case "MandelBrot":
+            default: case "m":
                 f = build.buildMandelbrot();
                 v = new ImageView(f);
                 v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -118,8 +120,18 @@ public class App extends Application {
     }
     public static void main(String[] args) throws ParseException, IOException {
         Options options = new Options();
-        options.addRequiredOption("f", "function", true, "MandelBrot | Julia ");
-        options.addRequiredOption("m", "mode", true, "terminal | gui");
+
+        OptionGroup mode = new OptionGroup();
+        mode.addOption(new Option("g", "gui", false, "Show GUI"));
+        mode.addOption(new Option("t", "terminal", false, "Use only terminal"));
+        mode.setRequired(true);
+        options.addOptionGroup(mode);
+      
+        OptionGroup fun = new OptionGroup();
+        fun.addOption(new Option("m", "mandelbrot", false, "Use MandelBrot function"));
+        fun.addOption(new Option("j", "julia", false, "Use Julia function"));
+        fun.setRequired(true);
+        options.addOptionGroup(fun);
 
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("AppTester", options, true);
@@ -132,65 +144,59 @@ public class App extends Application {
 
         // ***Interrogation Stage***
         String getFunction = "";
-        String getMode = "";
         Fractal fract;
         
-        if (cmd.hasOption("m")) {
-            getMode = cmd.getOptionValue("m");
-            if(getMode.equals("gui")){
-                getFunction = cmd.getOptionValue("f");
+        if (cmd.hasOption("g")) {
+            getFunction = fun.getSelected();
 
-                try (Scanner sc = new Scanner(System.in)) {
-                    System.out.println("Please enter X:");
-                    String xa = sc.nextLine();
-                    final Double x = Double.parseDouble(xa);
-                    System.out.println("Please enter Y:");
-                    String ya = sc.nextLine();
-                    final double y = Double.parseDouble(ya);
+            try (Scanner sc = new Scanner(System.in)) {
+                System.out.println("Please enter X:");
+                String xa = sc.nextLine();
+                final Double x = Double.parseDouble(xa);
+                System.out.println("Please enter Y:");
+                String ya = sc.nextLine();
+                final double y = Double.parseDouble(ya);
 
-                    Application.launch(App.class,
-                            "--function=" + getFunction,
-                            "--x="+x,
-                            "--y="+y
-                    );
-                }
-            }
-            if(getMode.equals("terminal")){
-                
-                System.out.println("Welcome on the terminal!");
-
-                if(getFunction.equals("MandelBrot")){
-                    fract = new Fractal.Builder(WIDTH, HEIGHT).buildMandelbrot();
-                }else{ 
-                    if(getFunction.equals("Julia")){
-                        try (Scanner sc = new Scanner(System.in)) {
-                            System.out.println("Please enter X:");
-                            String xa = sc.nextLine();
-                            final Double x = Double.parseDouble(xa);
-                            System.out.println("Please enter Y:");
-                            String ya = sc.nextLine();
-                            final double y = Double.parseDouble(ya);
-
-                            getFunction = cmd.getOptionValue("f");
-                            Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y)); 
-                            fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia(); 
-
-                            File outputFile = new File(getFunction);
-                            ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
-                            System.out.println("An image was created: "+outputFile.getName());
-                        }
-                    }else{
-                        System.out.println(getFunction+": Function doesn't exist");
-                        formatter.printHelp("AppTester", options, true);
-                    }
-
-                }
-                
+                Application.launch(App.class,
+                    "--function=" + getFunction,
+                    "--x="+x,
+                    "--y="+y
+                );
             }
         }
+        if(cmd.hasOption("t")){    
+            System.out.println("Welcome on the terminal!");
 
-        
+            if(cmd.hasOption("m")){
+                fract = new Fractal.Builder(WIDTH, HEIGHT).buildMandelbrot();
+                File outputFile = new File("mandelbrot");
+                ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
+                System.out.println("An image was created: " + outputFile.getName());
+            }else{ 
+                if (cmd.hasOption("j")) {
+                    try (Scanner sc = new Scanner(System.in)) {
+                        System.out.println("Please enter X:");
+                        String xa = sc.nextLine();
+                        final Double x = Double.parseDouble(xa);
+                        System.out.println("Please enter Y:");
+                        String ya = sc.nextLine();
+                        final double y = Double.parseDouble(ya);
 
+                        Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y)); 
+                        fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia(); 
+
+                        File outputFile = new File("julia_x"+x+"_y"+y);
+                        ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
+                        System.out.println("An image was created: "+outputFile.getName());
+                    }
+                }else{
+                    System.out.println(getFunction+": Function doesn't exist");
+                    formatter.printHelp("AppTester", options, true);
+                }
+
+            }
+                
+        }
     }
 
 }
