@@ -77,26 +77,63 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(0, -0.8)); // Fonction Julia
-        BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
-        Fractal f = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1)
-                .buildMandelbrot();
-        try {
-            saveImageFile(f, stage);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        v = new ImageView(f);
-        v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                zoomIn();
-            }
-        });
+        Parameters params = getParameters();
+        String getFunction = params.getNamed().get("function");
+        double getX = Double.parseDouble(params.getNamed().get("x"));
+        double getY = Double.parseDouble(params.getNamed().get("x"));
 
+
+        Function<Complex, Complex> julia;
+        BiFunction<Integer, Integer, Color> color;
+        Fractal f;
+        
+
+        switch(getFunction){
+            case "Julia":
+                julia = c -> c.multiply(c).add(Complex.build(getX, getY));
+                color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
+                f = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1).buildJulia();
+                v = new ImageView(f);
+                v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        zoomIn();
+                    }
+                });
+                break;
+            case "MandelBrot":
+                julia = c -> c.multiply(c).add(Complex.build(getX, getY)); // Fonction Julia
+                color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
+                f = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1)
+                        .buildMandelbrot();
+                v = new ImageView(f);
+                v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        zoomIn();
+                    }
+                });
+                break;
+            default:
+                julia = c -> c.multiply(c).add(Complex.build(0, -0.8)); // Fonction Julia
+                color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
+                f = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1)
+                        .buildMandelbrot();
+                v = new ImageView(f);
+                v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        zoomIn();
+                    }
+                });
+                break;
+        }
+        
         var scene = new Scene(new StackPane(v), 1000, 1000);
         stage.setScene(scene);
         stage.show();
+
+
     }
 
     public static void main(String[] args) throws ParseException, IOException {
@@ -119,13 +156,30 @@ public class App extends Application {
         String getopt = "";
         Fractal fract;
         WritableImage writableImage;
+
         
         if (cmd.hasOption("m")) {
             getopt = cmd.getOptionValue("m");
             if(getopt.equals("gui")){
-                launch();
+                getopt = cmd.getOptionValue("f");
+
+                try (Scanner sc = new Scanner(System.in)) {
+                    System.out.println("Entrez X:");
+                    String xa = sc.nextLine();
+                    final Double x = Double.parseDouble(xa);
+                    System.out.println("Entrez Y:");
+                    String ya = sc.nextLine();
+                    final double y = Double.parseDouble(ya);
+
+                    Application.launch(App.class,
+                            "--function=" + getopt,
+                            "--x="+x,
+                            "--y="+y
+                    );
+                }
             }
             if(getopt.equals("terminal")){
+                
                 System.out.println("Bienvenue dans la version Terminale");
 
                 try (Scanner sc = new Scanner(System.in)) {
@@ -138,18 +192,21 @@ public class App extends Application {
                     Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y)); // Fonction Julia
                     BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7,
                             0.7);
+
                     getopt = cmd.getOptionValue("f");
                     if(getopt.equals("MandelBrot")){
-                       fract = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1).buildMandelbrot();
+                        fract = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1).buildMandelbrot();
                     }else{
                         fract = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(1).buildJulia(); 
                     }
                     File outputFile = new File("image");
                     ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
+                    System.out.println("An image was created: image.png");
                 }
                 
             }
         }
+
         
 
     }
