@@ -3,9 +3,11 @@ package org.fractaly.screens;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.fractaly.model.ComputeFractal;
 import org.fractaly.utils.Complex;
 import org.fractaly.utils.Julia;
 
@@ -14,17 +16,43 @@ public class Fractal extends WritableImage {
     private final int w; // Required
     private final int h; // Required
     private final int maxIter; // Optional
+    private final double zoom; // Optional
     private final Function<Complex, Complex> juliaFunction; // Optional
     private final BiFunction<Integer, Integer, Color> colorFunction;
 
-    private Fractal(int w, int h, int maxIter, Function<Complex, Complex> juliaFunction,
+    private Fractal(int w, int h, int maxIter, double zoom, Function<Complex, Complex> juliaFunction,
             BiFunction<Integer, Integer, Color> colorFunction) {
         super(w, h);
         this.w = w;
         this.h = h;
         this.maxIter = maxIter;
+        this.zoom = zoom;
         this.juliaFunction = juliaFunction;
         this.colorFunction = colorFunction;
+    }
+
+    public int getMaxIter() {
+        return maxIter;
+    }
+
+    public int getW() {
+        return w;
+    }
+
+    public int getH() {
+        return h;
+    }
+
+    public double getZoom() {
+        return zoom;
+    }
+
+    public BiFunction<Integer, Integer, Color> getColorFunction() {
+        return colorFunction;
+    }
+
+    public Function<Complex, Complex> getJuliaFunction() {
+        return juliaFunction;
     }
 
     public static class Builder {
@@ -32,6 +60,7 @@ public class Fractal extends WritableImage {
         private final int w; // Required
         private final int h; // Required
         private int maxIter; // Optional
+        private double zoom; // Optional
         private Function<Complex, Complex> juliaFunction; // Optional
         private BiFunction<Integer, Integer, Color> colorFunction; // Optional
 
@@ -50,6 +79,7 @@ public class Fractal extends WritableImage {
             this.w = w;
             this.h = h;
             this.maxIter = 50; // Default values
+            this.zoom = 1.0;
             this.juliaFunction = z -> z.multiply(z).add(Complex.build(-0.7, 0.27015)); // Default values
             this.colorFunction = (i, maxI) -> Color.hsb((255 * i / maxI) % 360, 1, i < maxI ? 1 : 0); // Default values
         }
@@ -62,6 +92,17 @@ public class Fractal extends WritableImage {
          */
         public Builder maxIter(int maxIter) {
             this.maxIter = maxIter;
+            return this;
+        }
+
+        /**
+         * Setter for the Builder. Sets up the maxIter variable for the julia function.
+         * 
+         * @param maxIter The maximum number of iterations of the Julia function
+         * @return Builder, you can continue piping commands.
+         */
+        public Builder zoom(double zoom) {
+            this.zoom = zoom;
             return this;
         }
 
@@ -89,9 +130,14 @@ public class Fractal extends WritableImage {
          * 
          * @return Fractal f, the corresponding fractal
          */
-        public Fractal build() {
-            Fractal res = new Fractal(this.w, this.h, this.maxIter, this.juliaFunction, this.colorFunction);
-            Julia.build(res.getPixelWriter(), this.w, this.h, this.maxIter, this.juliaFunction, this.colorFunction);
+        public Fractal buildJulia() {
+            Fractal res = new Fractal(this.w, this.h, this.maxIter, this.zoom, this.juliaFunction, this.colorFunction);
+            // Julia.build(res.getPixelWriter(), this.w, this.h, this.maxIter,
+            // this.juliaFunction, this.colorFunction);
+            // return res;
+            ForkJoinPool pool = new ForkJoinPool();
+            ComputeFractal f = new ComputeFractal(0, w * h, res);
+            pool.invoke(f);
             return res;
         }
 
