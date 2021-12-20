@@ -58,18 +58,8 @@ public class App extends Application {
         ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputFile);
     }
 
-    private static void createTextFile(String name){
-        try {
-            File myObj = new File(name);
-            if (myObj.createNewFile()) {
-                System.out.println("File created: " + myObj.getName());
-            } else {
-                System.out.println("File already exists.");
-            }
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+    private static File createTextFile(String name){
+        return new File(name + ".txt");
     }
 
     private static void addDescription(File f, Double x, Double y, String function){
@@ -213,7 +203,11 @@ public class App extends Application {
 
         button.setOnAction(e -> {
             try {
+                final String getFunctionString = getFunction;
                 saveToFile(fra,name);
+                File description = createTextFile(name);
+                addDescription(description, .0, .0, getFunctionString);
+                System.out.println("A description was created " + description.getName());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -297,6 +291,9 @@ public class App extends Application {
                 File outputFile = new File(name);
                 ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                 System.out.println("An image was created: " + outputFile.getName());
+                File description = createTextFile(outputFile.getName());
+                addDescription(description, .0, .0, "Mandelbrot");
+                System.out.println("A description was created " + description.getName());
             }else{ 
                 if (cmd.hasOption("j")) {
                     try (Scanner sc = new Scanner(System.in)) {
@@ -316,6 +313,10 @@ public class App extends Application {
 
                         ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                         System.out.println("An image was created: "+outputFile.getName());
+                        File description = createTextFile(outputFile.getName());
+                        addDescription(description, x, y, "Julia");
+                        System.out.println("A description was created " + description.getName());
+
                     }
                 }else{
                     System.out.println(getFunction+": Function doesn't exist");
