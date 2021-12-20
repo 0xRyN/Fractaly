@@ -9,11 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -24,7 +25,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Scanner;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import javax.imageio.ImageIO;
@@ -50,7 +50,6 @@ public class App extends Application {
     private static final int WIDTH = 1000;
     private static final int HEIGHT = 1000;
     private ImageView v;
-    private double zoomFactor = 1.0;
 
     Calendar now = Calendar.getInstance();
     private int day = now.get(Calendar.DAY_OF_MONTH);
@@ -72,13 +71,50 @@ public class App extends Application {
             myWriter.write("X: " + x + "| Y: " + y + " | Function: " + function);
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
+            System.out.println("A description was created " + f.getName());
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
 
-    public void zoom(Fractal fract, boolean bool) {
+    private static void printInstructions() {
+        System.out.println("USAGE:");
+        System.out.println("[ZOOM]: LEFT CLICK / ENTER");
+        System.out.println("[UNZOOM]: RIGHT CLICK / BACKSPACE");
+        System.out.println("[MOVE]: ARROW KEYS");
+        System.out.println("You got five seconds to read this instructions...");
+
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public void move(double offsetX, double offsetY) {
+        Fractal fract = (Fractal) v.getImage();
+        Instant before = Instant.now();
+        // Adding old offset makes it not very intuitive
+        double resOffsetX = -(Math.abs(fract.getOffsetX()) + offsetX);
+        double resOffsetY = -(Math.abs(fract.getOffsetY()) + offsetY);
+        Fractal.Builder newBuilder = new Fractal.Builder(fract).offsetX(resOffsetX).offsetY(resOffsetY);
+        Fractal f = null;
+        if (fract.isMandelbrot()) {
+            f = newBuilder.buildMandelbrot();
+        } else {
+
+            f = newBuilder.buildJulia();
+        }
+        v.setImage(f);
+        Duration d = Duration.between(before, Instant.now());
+        System.out.println("It took " + d.toString() + " to render.");
+    }
+
+    public void zoom(boolean bool) {
+        Fractal fract = (Fractal) v.getImage();
+        double zoomFactor = fract.getZoom();
         Instant before = Instant.now();
         if (bool) {
             zoomFactor += 0.1;
@@ -95,7 +131,83 @@ public class App extends Application {
         }
         v.setImage(f);
         Duration d = Duration.between(before, Instant.now());
-        System.out.println(d.toString());
+        System.out.println("It took " + d.toString() + " to render.");
+    }
+
+    public void addEventListeners(Scene scene, Stage stage) {
+
+        // For Zoom / Zoom out / Movement with mouse
+        v.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                MouseButton gEvent = mouseEvent.getButton();
+                switch (gEvent) {
+                    default:
+                    case PRIMARY:
+                        zoom(true);
+                        break;
+                    case SECONDARY:
+                        zoom(false);
+                        break;
+                    /*
+                     * case MIDDLE:
+                     * double width = v.getBoundsInLocal().getWidth();
+                     * double centery = (WIDTH) / 2.0;
+                     * double centerx = (HEIGHT) / 2.0;
+                     * 
+                     * double scale = v.getBoundsInLocal().getHeight() / width;
+                     * double xOffset = scale * (centerx - mouseEvent.getX());
+                     * double yOffset = scale * (centery - mouseEvent.getY());
+                     * 
+                     * move(xOffset, yOffset);
+                     * break;
+                     */
+                }
+            }
+        });
+
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            public void handle(KeyEvent ke) {
+                if (ke.getCode() == KeyCode.UP) {
+                    move(0, 20);
+                    ke.consume(); // <-- stops passing the event to next node
+                }
+
+                else if (ke.getCode() == KeyCode.DOWN) {
+                    move(0, -20);
+                    ke.consume(); // <-- stops passing the event to next node
+                }
+
+                else if (ke.getCode() == KeyCode.RIGHT) {
+                    move(-20, 0);
+                    ke.consume(); // <-- stops passing the event to next node
+                }
+
+                else if (ke.getCode() == KeyCode.LEFT) {
+                    move(20, 0);
+                    ke.consume(); // <-- stops passing the event to next node
+                }
+
+                else if (ke.getCode() == KeyCode.ENTER) {
+                    zoom(true);
+                    ke.consume(); // <-- stops passing the event to next node
+                }
+
+                else if (ke.getCode() == KeyCode.BACK_SPACE) {
+                    zoom(false);
+                    ke.consume(); // <-- stops passing the event to next node
+                }
+            }
+        });
+
+        // When window closes, close all threads and exit the program
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
     }
 
     @Override
@@ -105,78 +217,21 @@ public class App extends Application {
         double getX = Double.parseDouble(params.getNamed().get("x"));
         double getY = Double.parseDouble(params.getNamed().get("y"));
 
-        Function<Complex, Complex> julia;
-        Builder build = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(FractalColors.GRAY_SCALE);
+        // Builds and displays a fractal based on arguments.
+        Builder build = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(FractalColors.RED_SCALE);
         Fractal f = null;
-
         switch (getFunction) {
             case "j":
-                julia = c -> c.multiply(c).add(Complex.build(getX, getY));
+                Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(getX, getY));
                 f = build.juliaFunction(julia).buildJulia();
-                v = new ImageView(f);
-                final Fractal fract = f;
-                v.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-                        MouseButton gEvent = mouseEvent.getButton();
-                        switch (gEvent) {
-                            default:
-                            case PRIMARY:
-                                zoom(fract, true);
-                                break;
-                            case SECONDARY:
-                                zoom(fract, false);
-                                break;
-                            case MIDDLE:
-                                double width = v.getBoundsInLocal().getWidth();
-                                double centery = (WIDTH) / 2;
-                                double centerx = (HEIGHT) / 2;
-
-                                double scale = v.getBoundsInLocal().getHeight() / width;
-                                double xOffset = scale * (centerx - mouseEvent.getX());
-                                double yOffset = scale * (centery - mouseEvent.getY());
-
-                                v.setTranslateX(xOffset);
-                                v.setTranslateY(yOffset);
-                                break;
-                        }
-                    }
-                });
                 break;
-            default:
             case "m":
                 f = build.buildMandelbrot();
-                v = new ImageView(f);
-                final Fractal fractal = f;
-                v.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-                        MouseButton gEvent = mouseEvent.getButton();
-                        switch (gEvent) {
-                            default:
-                            case PRIMARY:
-                                zoom(fractal, true);
-                                break;
-                            case SECONDARY:
-                                zoom(fractal, false);
-                                break;
-                            case MIDDLE:
-                                double width = v.getBoundsInLocal().getWidth();
-                                double centery = (WIDTH) / 2;
-                                double centerx = (HEIGHT) / 2;
-
-                                double scale = v.getBoundsInLocal().getHeight() / width;
-                                double xOffset = scale * (centerx - mouseEvent.getX());
-                                double yOffset = scale * (centery - mouseEvent.getY());
-
-                                v.setTranslateX(xOffset);
-                                v.setTranslateY(yOffset);
-                                break;
-                        }
-                    }
-                });
+                break;
+            default:
                 break;
         }
+        v = new ImageView(f);
 
         if (getFunction.equals("j")) {
             getFunction = "Julia";
@@ -198,7 +253,6 @@ public class App extends Application {
                 saveToFile(fra, name);
                 File description = createTextFile(name);
                 addDescription(description, .0, .0, name);
-                System.out.println("A description was created " + description.getName());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -209,13 +263,8 @@ public class App extends Application {
         StackPane.setAlignment(button, Pos.BOTTOM_CENTER);
         root.getChildren().add(stackPane);
 
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                Platform.exit();
-                System.exit(0);
-            }
-        });
+        addEventListeners(scene, stage);
+
         stage.setTitle("Image created with: " + getFunction);
         stage.setScene(scene);
         stage.show();
@@ -255,33 +304,41 @@ public class App extends Application {
             // Laucnh choice menu etc
 
             getFunction = fun.getSelected();
-            if(cmd.hasOption("j"))
-                try (Scanner sc = new Scanner(System.in)) {
-                    System.out.println("Please enter X:");
-                    String xa = sc.nextLine();
-                    final Double x = Double.parseDouble(xa);
-                    System.out.println("Please enter Y:");
-                    String ya = sc.nextLine();
-                    final double y = Double.parseDouble(ya);
+            if (cmd.hasOption("j")) {
+                Scanner sc = new Scanner(System.in);
+                // Parse args
+                System.out.println("Please enter X:");
+                String xa = sc.nextLine();
+                final Double x = Double.parseDouble(xa);
+                System.out.println("Please enter Y:");
+                String ya = sc.nextLine();
+                final double y = Double.parseDouble(ya);
 
-                    System.out.println("USAGE:");
-                    System.out.println("[ZOOM]:  Click on Primary Mouse");
-                    System.out.println("[UNZOOM]: Click on Second Mouse");
-                    System.out.println("[MOVE]: Click on Middle Mouse");
-                    System.out.println("You got three seconds to read this instructions");
+                sc.close();
 
-                    Thread.sleep(3000);
-                    Application.launch(App.class,
-                            "--function=" + getFunction,
-                            "--x=" + x,
-                            "--y=" + y);
-            }else{
-                if (cmd.hasOption("m")) {
-                    Application.launch(App.class,
-                            "--function=" + getFunction,
-                            "--x=" + 0,
-                            "--y=" + 0);
-                }
+                // Print instructions
+                printInstructions();
+
+                // Launch app
+                Application.launch(App.class,
+                        "--function=" + getFunction,
+                        "--x=" + x,
+                        "--y=" + y);
+
+            }
+
+            else if (cmd.hasOption("m")) {
+                // Print instructions
+                printInstructions();
+
+                // Launch app
+                Application.launch(App.class,
+                        "--function=" + getFunction,
+                        "--x=" + 0,
+                        "--y=" + 0);
+            }
+
+            else {
                 formatter.printHelp("AppTester", options, true);
                 throw new IllegalArgumentException();
             }
@@ -292,21 +349,20 @@ public class App extends Application {
         if (cmd.hasOption("t")) {
             System.out.println("Welcome on the terminal!");
 
-            Calendar now_ = Calendar.getInstance();
-            final int day_ = now_.get(Calendar.DAY_OF_MONTH);
-            final int hour_ = now_.get(Calendar.HOUR_OF_DAY);
-            final int minute_ = now_.get(Calendar.MINUTE);
+            Calendar now = Calendar.getInstance();
+            final int day = now.get(Calendar.DAY_OF_MONTH);
+            final int hour = now.get(Calendar.HOUR_OF_DAY);
+            final int minute = now.get(Calendar.MINUTE);
 
             if (cmd.hasOption("m")) {
                 fract = new Fractal.Builder(WIDTH, HEIGHT).buildMandelbrot();
 
-                name = "MandelBrot_" + day_ + "_" + hour_ + "_" + minute_;
+                name = "MandelBrot_" + day + "_" + hour + "_" + minute;
                 File outputFile = new File(name);
                 ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                 System.out.println("An image was created: " + outputFile.getName());
                 File description = createTextFile(outputFile.getName());
                 addDescription(description, .0, .0, "Mandelbrot");
-                System.out.println("A description was created " + description.getName());
             } else {
                 if (cmd.hasOption("j")) {
                     try (Scanner sc = new Scanner(System.in)) {
@@ -320,15 +376,13 @@ public class App extends Application {
                         Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y));
                         fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia();
 
-                        name = "Julia_" + day_ + "_" + hour_ + "_" + minute_;
+                        name = "Julia_" + day + "_" + hour + "_" + minute;
                         File outputFile = new File(name);
 
                         ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                         System.out.println("An image was created: " + outputFile.getName());
                         File description = createTextFile(outputFile.getName());
                         addDescription(description, x, y, "Julia");
-                        System.out.println("A description was created " + description.getName());
-
                     }
                 } else {
                     formatter.printHelp("AppTester", options, true);
