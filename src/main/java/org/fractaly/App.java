@@ -1,11 +1,14 @@
 package org.fractaly;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -75,9 +78,13 @@ public class App extends Application {
         }
     }
 
-    public void zoomIn(Fractal fract) {
+    public void zoom(Fractal fract, boolean bool) {
         Instant before = Instant.now();
-        zoomFactor += 0.1;
+        if(bool){
+            zoomFactor += 0.1;
+        }else{
+            zoomFactor -= 0.1;
+        }
         Fractal.Builder newBuilder = new Fractal.Builder(fract).zoom(zoomFactor);
         Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(0, -0.8)); // Fonction Julia
         BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
@@ -87,24 +94,6 @@ public class App extends Application {
             f = build.buildMandelbrot();
         }else{
 
-            f = newBuilder.buildJulia();
-        }
-        v.setImage(f);
-        Duration d = Duration.between(before, Instant.now());
-        System.out.println(d.toString());
-    }
-
-    public void zoomOut(Fractal fract) {
-        Instant before = Instant.now();
-        zoomFactor -= 0.1;
-        Fractal.Builder newBuilder = new Fractal.Builder(fract).zoom(zoomFactor);
-        Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(0, -0.8)); // Fonction Julia
-        BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
-        Builder build = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(zoomFactor);
-        Fractal f = null;
-        if (fract.isMandelbrot()) {
-            f = build.buildMandelbrot();
-        } else {
             f = newBuilder.buildJulia();
         }
         v.setImage(f);
@@ -135,10 +124,10 @@ public class App extends Application {
                         MouseButton gEvent = mouseEvent.getButton();
                         switch(gEvent){
                             default: case PRIMARY:
-                                zoomIn(fract);
+                                zoom(fract,true);
                                 break;
                             case SECONDARY:
-                                zoomOut(fract);
+                                zoom(fract,false);
                                 break;
                             case MIDDLE:
                                 double width = v.getBoundsInLocal().getWidth();
@@ -168,10 +157,10 @@ public class App extends Application {
                         switch (gEvent) {
                             default:
                             case PRIMARY:
-                                zoomIn(fractal);
+                                zoom(fractal,true);
                                 break;
                             case SECONDARY:
-                                zoomOut(fractal);
+                                zoom(fractal,false);
                                 break;
                             case MIDDLE:
                                 double width = v.getBoundsInLocal().getWidth();
@@ -257,6 +246,8 @@ public class App extends Application {
         
         if (cmd.hasOption("g")) {
             System.out.println("Welcome on the GUI!");
+            // Laucnh choice menu etc
+
             getFunction = fun.getSelected();
 
             try (Scanner sc = new Scanner(System.in)) {
@@ -286,7 +277,7 @@ public class App extends Application {
 
         if(cmd.hasOption("t")){    
             System.out.println("Welcome on the terminal!");
-
+            
             Calendar now_ = Calendar.getInstance();
             final int day_ = now_.get(Calendar.DAY_OF_MONTH);
             final int hour_ = now_.get(Calendar.HOUR_OF_DAY);
@@ -326,7 +317,6 @@ public class App extends Application {
 
                     }
                 }else{
-                    System.out.println(getFunction+": Function doesn't exist");
                     formatter.printHelp("AppTester", options, true);
                 }
 
