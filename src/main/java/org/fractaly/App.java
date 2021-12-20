@@ -141,9 +141,14 @@ public class App extends Application {
                                 zoomOut(fract);
                                 break;
                             case MIDDLE:
-                                double scale = v.getBoundsInLocal().getHeight() / (WIDTH / 2);
-                                double xOffset = scale * ((HEIGHT / 2) - mouseEvent.getX());
-                                double yOffset = scale * ((WIDTH / 2) - mouseEvent.getY());
+                                double width = v.getBoundsInLocal().getWidth();
+                                double centery = (WIDTH) / 2;
+                                double centerx = (HEIGHT) / 2;
+
+                                double scale = v.getBoundsInLocal().getHeight() / width;
+                                double xOffset = scale * (centerx - mouseEvent.getX());
+                                double yOffset = scale * (centery - mouseEvent.getY());
+
                                 v.setTranslateX(xOffset);
                                 v.setTranslateY(yOffset);
                                 break
@@ -246,6 +251,7 @@ public class App extends Application {
         Fractal fract;
         
         if (cmd.hasOption("g")) {
+            System.out.println("Welcome on the GUI!");
             getFunction = fun.getSelected();
 
             try (Scanner sc = new Scanner(System.in)) {
@@ -260,6 +266,7 @@ public class App extends Application {
                 System.out.println("[ZOOM]:  Click on Primary Mouse");
                 System.out.println("[UNZOOM]: Click on Second Mouse");
                 System.out.println("[MOVE]: Click on Middle Mouse");
+                System.out.println("You got three seconds to read this instructions");
 
                 Thread.sleep(3000);
                 Application.launch(App.class,
