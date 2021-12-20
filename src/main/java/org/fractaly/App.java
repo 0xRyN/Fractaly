@@ -53,6 +53,11 @@ public class App extends Application {
     private ImageView v;
     private double zoomFactor = 1.0;
 
+    Calendar now = Calendar.getInstance();
+    private int day = now.get(Calendar.DAY_OF_MONTH);
+    private int hour = now.get(Calendar.HOUR_OF_DAY);
+    private int minute = now.get(Calendar.MINUTE);
+
     private static void saveToFile(Image image, String name) throws IOException{
         File outputFile = new File(name);
         ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputFile);
@@ -65,9 +70,7 @@ public class App extends Application {
     private static void addDescription(File f, Double x, Double y, String function){
         try {
             FileWriter myWriter = new FileWriter(f);
-            myWriter.write("X: "+x+"| ");
-            myWriter.write("Y: "+y+"| ");
-            myWriter.write("Function: "+function);
+            myWriter.write("X: "+x+"| Y: "+y+" | Function: "+function);
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
@@ -195,18 +198,13 @@ public class App extends Application {
         Button button = new Button("Save Image");
 
         final Fractal fra = f;
-        Calendar now = Calendar.getInstance();
-        int day = now.get(Calendar.DAY_OF_MONTH);
-        int hour = now.get(Calendar.HOUR_OF_DAY);
-        int minute = now.get(Calendar.MINUTE);
         final String name = getFunction+"_"+day+"_"+hour+"_"+minute;
 
         button.setOnAction(e -> {
             try {
-                final String getFunctionString = getFunction;
                 saveToFile(fra,name);
                 File description = createTextFile(name);
-                addDescription(description, .0, .0, getFunctionString);
+                addDescription(description, .0, .0, name);
                 System.out.println("A description was created " + description.getName());
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -276,18 +274,20 @@ public class App extends Application {
             }
         }
 
-        Calendar now = Calendar.getInstance();
-        int day = now.get(Calendar.DAY_OF_MONTH);
-        int hour = now.get(Calendar.HOUR_OF_DAY);
-        int minute = now.get(Calendar.MINUTE);
         String name = "";
 
         if(cmd.hasOption("t")){    
             System.out.println("Welcome on the terminal!");
 
+            Calendar now_ = Calendar.getInstance();
+            final int day_ = now_.get(Calendar.DAY_OF_MONTH);
+            final int hour_ = now_.get(Calendar.HOUR_OF_DAY);
+            final int minute_ = now_.get(Calendar.MINUTE);
+
             if(cmd.hasOption("m")){
                 fract = new Fractal.Builder(WIDTH, HEIGHT).buildMandelbrot();
-                name = "MandelBrot_" + day + "_" + hour + "_" + minute;
+                
+                name = "MandelBrot_" + day_ + "_" + hour_ + "_" + minute_;
                 File outputFile = new File(name);
                 ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                 System.out.println("An image was created: " + outputFile.getName());
@@ -307,8 +307,7 @@ public class App extends Application {
                         Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y)); 
                         fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia(); 
 
-                
-                        name = "Julia_" + day + "_" + hour + "_" + minute;
+                        name = "Julia_" + day_ + "_" + hour_ + "_" + minute_;
                         File outputFile = new File(name);
 
                         ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
