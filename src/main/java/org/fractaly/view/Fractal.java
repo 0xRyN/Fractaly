@@ -83,7 +83,7 @@ public class Fractal extends WritableImage {
         public Builder(int w, int h) {
             this.w = w;
             this.h = h;
-            this.maxIter = 100; // Default values
+            this.maxIter = 300; // Default values
             this.zoom = 1.0;
             this.juliaFunction = z -> z.multiply(z).add(Complex.build(-0.7, 0.27015)); // Default values
             this.colorFunction = (i, maxI) -> Color.hsb((255 * i / maxI) % 360, 1, i < maxI ? 1 : 0); // Default values

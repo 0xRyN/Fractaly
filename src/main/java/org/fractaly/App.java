@@ -38,6 +38,7 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.fractaly.utils.Complex;
+import org.fractaly.utils.FractalColors;
 import org.fractaly.view.Fractal;
 import org.fractaly.view.Fractal.Builder;
 
@@ -46,7 +47,7 @@ import org.fractaly.view.Fractal.Builder;
  */
 public class App extends Application {
 
-    private static final int WIDTH = 1500;
+    private static final int WIDTH = 1000;
     private static final int HEIGHT = 1000;
     private ImageView v;
     private double zoomFactor = 1.0;
@@ -105,7 +106,7 @@ public class App extends Application {
         double getY = Double.parseDouble(params.getNamed().get("y"));
 
         Function<Complex, Complex> julia;
-        Builder build = new Fractal.Builder(WIDTH, HEIGHT);
+        Builder build = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(FractalColors.GRAY_SCALE);
         Fractal f = null;
 
         switch (getFunction) {

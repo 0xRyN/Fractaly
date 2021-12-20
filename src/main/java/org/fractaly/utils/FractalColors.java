@@ -1,0 +1,49 @@
+package org.fractaly.utils;
+
+import java.util.function.BiFunction;
+
+import javafx.scene.paint.Color;
+
+public class FractalColors {
+
+    public static BiFunction<Integer, Integer, Color> GRAY_SCALE = ((iter, maxIter) -> {
+        int c;
+        if (maxIter - iter == 0) {
+            c = 0;
+        } else {
+            c = iter * 255 / maxIter;
+        }
+        return Color.rgb(c, c, c);
+    });
+
+    public static BiFunction<Integer, Integer, Color> RED_SCALE = ((iter, maxIter) -> {
+        int c;
+        if (maxIter - iter == 0) {
+            c = 0;
+        } else {
+            c = iter * 255 / maxIter;
+        }
+        return Color.rgb(c, 0, 0);
+    });
+
+    public static BiFunction<Integer, Integer, Color> GREEN_SCALE = ((iter, maxIter) -> {
+        int c;
+        if (maxIter - iter == 0) {
+            c = 0;
+        } else {
+            c = iter * 255 / maxIter;
+        }
+        return Color.rgb(0, c, 0);
+    });
+
+    public static BiFunction<Integer, Integer, Color> BLUE_SCALE = ((iter, maxIter) -> {
+        int c;
+        if (maxIter - iter == 0) {
+            c = 0;
+        } else {
+            c = iter * 255 / maxIter;
+        }
+        return Color.rgb(0, 0, c);
+    });
+
+}
