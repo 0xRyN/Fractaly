@@ -20,6 +20,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -57,6 +58,34 @@ public class App extends Application {
         ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputFile);
     }
 
+    private static void createTextFile(String name){
+        try {
+            File myObj = new File(name);
+            if (myObj.createNewFile()) {
+                System.out.println("File created: " + myObj.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    private static void addDescription(File f, Double x, Double y, String function){
+        try {
+            FileWriter myWriter = new FileWriter(f);
+            myWriter.write("X: "+x+"| ");
+            myWriter.write("Y: "+y+"| ");
+            myWriter.write("Function: "+function);
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
     public void zoomIn(Fractal fract) {
         Instant before = Instant.now();
         zoomFactor += 0.1;
@@ -92,31 +121,6 @@ public class App extends Application {
         v.setImage(f);
         Duration d = Duration.between(before, Instant.now());
         System.out.println(d.toString());
-    }
-
-    private void zoom100(double x, double y, ImageView imageView) {
-        double oldHeight = imageView.getBoundsInLocal().getHeight();
-        double oldWidth = imageView.getBoundsInLocal().getWidth();
-
-        boolean heightLarger = oldHeight > oldWidth;
-        imageView.setFitHeight(-1);
-        imageView.setFitWidth(-1);
-        // calculate scale factor
-        double scale = 1;
-        if (heightLarger) {
-            scale = imageView.getBoundsInLocal().getHeight() / oldHeight;
-        } else {
-            scale = imageView.getBoundsInLocal().getWidth() / oldWidth;
-        }
-
-        double centery = root.getLayoutBounds().getHeight() / 2;
-        double centerx = root.getLayoutBounds().getWidth() / 2;
-
-        double xOffset = scale * (centerx - x);
-        double yOffset = scale * (centery - y);
-        imageView.setTranslateX(xOffset);
-        imageView.setTranslateY(yOffset);
-
     }
 
     @Override
@@ -277,12 +281,20 @@ public class App extends Application {
                 );
             }
         }
+
+        Calendar now = Calendar.getInstance();
+        int day = now.get(Calendar.DAY_OF_MONTH);
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        int minute = now.get(Calendar.MINUTE);
+        String name = "";
+
         if(cmd.hasOption("t")){    
             System.out.println("Welcome on the terminal!");
 
             if(cmd.hasOption("m")){
                 fract = new Fractal.Builder(WIDTH, HEIGHT).buildMandelbrot();
-                File outputFile = new File("mandelbrot");
+                name = "mandelbrot" + day + "_" + hour + "_" + minute;
+                File outputFile = new File(name);
                 ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                 System.out.println("An image was created: " + outputFile.getName());
             }else{ 
@@ -298,7 +310,10 @@ public class App extends Application {
                         Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y)); 
                         fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia(); 
 
-                        File outputFile = new File("julia");
+                
+                        name = "julia_" + day + "_" + hour + "_" + minute;
+                        File outputFile = new File(name);
+
                         ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                         System.out.println("An image was created: "+outputFile.getName());
                     }
