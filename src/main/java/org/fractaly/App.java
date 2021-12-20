@@ -217,7 +217,7 @@ public class App extends Application {
         double getY = Double.parseDouble(params.getNamed().get("y"));
 
         // Builds and displays a fractal based on arguments.
-        Builder build = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(FractalColors.GRAY_SCALE);
+        Builder build = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(FractalColors.RED_SCALE);
         Fractal f = null;
         switch (getFunction) {
             case "j":
