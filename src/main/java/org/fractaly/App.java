@@ -2,14 +2,11 @@ package org.fractaly;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -49,7 +46,7 @@ import org.fractaly.view.Fractal.Builder;
  */
 public class App extends Application {
 
-    private static final int WIDTH = 1000;
+    private static final int WIDTH = 1500;
     private static final int HEIGHT = 1000;
     private ImageView v;
     private double zoomFactor = 1.0;
@@ -88,12 +85,9 @@ public class App extends Application {
             zoomFactor -= 0.1;
         }
         Fractal.Builder newBuilder = new Fractal.Builder(fract).zoom(zoomFactor);
-        Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(0, -0.8)); // Fonction Julia
-        BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
-        Builder build = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(zoomFactor);
         Fractal f = null;
         if (fract.isMandelbrot()) {
-            f = build.buildMandelbrot();
+            f = newBuilder.buildMandelbrot();
         } else {
 
             f = newBuilder.buildJulia();
@@ -192,7 +186,7 @@ public class App extends Application {
         VBox root = new VBox();
         var stackPane = new StackPane(v);
 
-        Scene scene = new Scene(root, 1000, 1000);
+        Scene scene = new Scene(root, WIDTH, HEIGHT);
         Button button = new Button("Save Image");
 
         final Fractal fra = f;

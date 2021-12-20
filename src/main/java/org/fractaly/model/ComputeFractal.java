@@ -39,11 +39,13 @@ public class ComputeFractal extends RecursiveAction {
              * If for example k = 55, 55 - (i * Fractal.width) = 55 - 50 = 5
              * We deduce that, if k = 55, we are evaluating i = 5, j = 5
              */
-            int i = k / w;
-            int j = k - (i * w);
-            double zi = (-1 + i * (2.0 / this.w)) / zoom;
-            double zj = (-1 + j * (2.0 / this.h)) / zoom;
-            Complex z = Complex.build(zi, zj);
+            int y = k / w; // Height - j index
+            int x = k - (y * w); // Width - i index
+
+            double zx = (-1 + x * (2.0 / this.w)) / zoom;
+            double zy = (-1 + y * (2.0 / this.h)) / zoom;
+            Complex z = Complex.build(zx, zy);
+
             int iter = 0;
 
             if (fractal.isMandelbrot()) {
@@ -51,7 +53,14 @@ public class ComputeFractal extends RecursiveAction {
             } else {
                 iter = Julia.compute(fractal.getMaxIter(), z, fractal.getJuliaFunction());
             }
-            fractal.getPixelWriter().setColor(i, j, fractal.getColorFunction().apply(iter, this.fractal.getMaxIter()));
+            try {
+                fractal.getPixelWriter().setColor(x, y,
+                        fractal.getColorFunction().apply(iter, this.fractal.getMaxIter()));
+            } catch (Exception e) {
+                System.out.println("Error when writing to WritableImage !");
+                e.printStackTrace();
+                System.exit(1);
+            }
         }
     }
 
