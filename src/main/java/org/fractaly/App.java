@@ -3,11 +3,12 @@ package org.fractaly;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -17,15 +18,14 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Calendar;
 import java.util.Scanner;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import javax.imageio.ImageIO;
-import javax.swing.text.JTextComponent.KeyBinding;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -49,23 +49,9 @@ public class App extends Application {
     private ImageView v;
     private double zoomFactor = 1.0;
 
-    private static void saveImageFile(WritableImage writableImage, Stage stage) throws IOException {
-        FileChooser fileChooser = new FileChooser();
-
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
-                "image files (*.png)", "*.png");
-        fileChooser.getExtensionFilters().add(extFilter);
-
-        File file = fileChooser.showSaveDialog(stage);
-
-        if (file != null) {
-            String fileName = file.getName();
-
-            if (!fileName.toUpperCase().endsWith(".PNG")) {
-                file = new File(file.getAbsolutePath() + ".png");
-            }
-            ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), "png", file);
-        }
+    private static void saveToFile(Image image, String name) throws IOException{
+        File outputFile = new File(name);
+        ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputFile);
     }
 
     public void zoomIn(Fractal fract) {
@@ -126,12 +112,12 @@ public class App extends Application {
                 v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        if(mouseEvent.getClickCount() >= 2 ){
+                        int getClickCount = mouseEvent.getClickCount();
+                        if (getClickCount >= 2) {
                             zoomIn(fract);
-                        }else{
+                        } else {
                             zoomOut(fract);
                         }
-                        
                     }
                 });
                 break;
@@ -142,27 +128,54 @@ public class App extends Application {
                 v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        if (mouseEvent.getClickCount() >= 2) {
+                        int getClickCount = mouseEvent.getClickCount();
+                        if (getClickCount >= 2) {
                             zoomIn(fractal);
                         } else {
                             zoomOut(fractal);
                         }
-
                     }
                 });
                 break;
         }
 
-      
+        if(getFunction.equals("j")){
+            getFunction = "Julia";
+        }else{
+            getFunction = "MandelBrot";
+        }
+        
+        VBox root = new VBox();
+        var stackPane = new StackPane(v);
 
-        Button saveBtn = new Button("Save Image");
+        Scene scene = new Scene(root, 1000, 1000);
+        Button button = new Button("Save Image");
 
-        VBox root = new VBox(10, v, saveBtn);
-        Scene scene = new Scene(root);
+        final Fractal fra = f;
+        Calendar now = Calendar.getInstance();
+        int day = now.get(Calendar.DAY_OF_MONTH);
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        int minute = now.get(Calendar.MINUTE);
+        final String name = getFunction+"_"+day+"_"+hour+"_"+minute;
 
-        //var scene = new Scene(new StackPane(v), 1000, 1000);
+        button.setOnAction(e -> {
+            try {
+                saveToFile(fra,name);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+        button.setVisible(true);
+        
+
+        root.getChildren().add(stackPane);
+        stackPane.getChildren().add(button);
+        
+
+        stage.setTitle("Image created with: "+getFunction);
         stage.setScene(scene);
         stage.show();
+        
     }
     public static void main(String[] args) throws ParseException, IOException {
         Options options = new Options();
