@@ -87,12 +87,36 @@ public class App extends Application {
         if (fract.isMandelbrot()) {
             f = build.buildMandelbrot();
         } else {
-
             f = newBuilder.buildJulia();
         }
         v.setImage(f);
         Duration d = Duration.between(before, Instant.now());
         System.out.println(d.toString());
+    }
+
+    private void zoom100(double x, double y, ImageView imageView) {
+        double oldHeight = imageView.getBoundsInLocal().getHeight();
+        double oldWidth = imageView.getBoundsInLocal().getWidth();
+
+        boolean heightLarger = oldHeight > oldWidth;
+        imageView.setFitHeight(-1);
+        imageView.setFitWidth(-1);
+        // calculate scale factor
+        double scale = 1;
+        if (heightLarger) {
+            scale = imageView.getBoundsInLocal().getHeight() / oldHeight;
+        } else {
+            scale = imageView.getBoundsInLocal().getWidth() / oldWidth;
+        }
+
+        double centery = root.getLayoutBounds().getHeight() / 2;
+        double centerx = root.getLayoutBounds().getWidth() / 2;
+
+        double xOffset = scale * (centerx - x);
+        double yOffset = scale * (centery - y);
+        imageView.setTranslateX(xOffset);
+        imageView.setTranslateY(yOffset);
+
     }
 
     @Override
@@ -115,12 +139,27 @@ public class App extends Application {
                 v.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                            if (mouseEvent.getClickCount() == 2) {
+                        MouseButton gEvent = mouseEvent.getButton();
+                        switch(gEvent){
+                            default: case PRIMARY:
                                 zoomIn(fract);
-                            }
-                        }else{
-                            zoomOut(fract);
+                                break;
+                            case SECONDARY:
+                                zoomOut(fract);
+                                break;
+                            case MIDDLE:
+                                double width = v.getBoundsInLocal().getWidth();
+                                double centery = 1000 / 2;
+                                double centerx =  1000 / 2;
+
+                                double scale = v.getBoundsInLocal().getHeight() / width;
+                                double xOffset = scale * (centerx - mouseEvent.getX());
+                                double yOffset = scale * (centery - mouseEvent.getY());
+
+                                v.setTranslateX(xOffset);
+                                v.setTranslateY(yOffset);
+                                break
+                            ;
                         }
                     }
                 });
@@ -132,12 +171,27 @@ public class App extends Application {
                 v.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                            if (mouseEvent.getClickCount() == 2) {
+                        MouseButton gEvent = mouseEvent.getButton();
+                        switch (gEvent) {
+                            default:
+                            case PRIMARY:
                                 zoomIn(fractal);
-                            }
-                        } else {
-                            zoomOut(fractal);
+                                break;
+                            case SECONDARY:
+                                zoomOut(fractal);
+                                break;
+                            case MIDDLE:
+                                double width = v.getBoundsInLocal().getWidth();
+                                double centery = 1000 / 2;
+                                double centerx = 1000 / 2;
+
+                                double scale = v.getBoundsInLocal().getHeight() / width;
+                                double xOffset = scale * (centerx - mouseEvent.getX());
+                                double yOffset = scale * (centery - mouseEvent.getY());
+
+                                v.setTranslateX(xOffset);
+                                v.setTranslateY(yOffset);
+                                break;
                         }
                     }
                 });
@@ -221,8 +275,9 @@ public class App extends Application {
                 final double y = Double.parseDouble(ya);
                 
                 System.out.println("USAGE:");
-                System.out.println("[ZOOM]: Double Click on Primary Mouse");
-                System.out.println("[UNZOOM]: Other mouse click");
+                System.out.println("[ZOOM]:  Click on Primary Mouse");
+                System.out.println("[UNZOOM]: Click on Second Mouse");
+                System.out.println("[MOVE]: Click on Middle Mouse");
 
                 Thread.sleep(3000);
                 Application.launch(App.class,
