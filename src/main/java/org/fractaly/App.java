@@ -10,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -167,10 +169,9 @@ public class App extends Application {
         });
         button.setVisible(true);
         
-
-        root.getChildren().add(stackPane);
         stackPane.getChildren().add(button);
-        
+        StackPane.setAlignment(button, Pos.BOTTOM_CENTER);
+        root.getChildren().add(stackPane);
 
         stage.setTitle("Image created with: "+getFunction);
         stage.setScene(scene);
