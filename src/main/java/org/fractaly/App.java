@@ -4,16 +4,20 @@ import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Scanner;
@@ -21,6 +25,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import javax.imageio.ImageIO;
+import javax.swing.text.JTextComponent.KeyBinding;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -82,6 +87,25 @@ public class App extends Application {
         System.out.println(d.toString());
     }
 
+    public void zoomOut(Fractal fract) {
+        Instant before = Instant.now();
+        zoomFactor -= 0.1;
+        Fractal.Builder newBuilder = new Fractal.Builder(fract).zoom(zoomFactor);
+        Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(0, -0.8)); // Fonction Julia
+        BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
+        Builder build = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(zoomFactor);
+        Fractal f = null;
+        if (fract.isMandelbrot()) {
+            f = build.buildMandelbrot();
+        } else {
+
+            f = newBuilder.buildJulia();
+        }
+        v.setImage(f);
+        Duration d = Duration.between(before, Instant.now());
+        System.out.println(d.toString());
+    }
+
     @Override
     public void start(Stage stage) {
         Parameters params = getParameters();
@@ -102,8 +126,12 @@ public class App extends Application {
                 v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
+                        if(mouseEvent.getClickCount() >= 2 ){
+                            zoomIn(fract);
+                        }else{
+                            zoomOut(fract);
+                        }
                         
-                        zoomIn(fract);
                     }
                 });
                 break;
@@ -114,12 +142,25 @@ public class App extends Application {
                 v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        zoomIn(fractal);
+                        if (mouseEvent.getClickCount() >= 2) {
+                            zoomIn(fractal);
+                        } else {
+                            zoomOut(fractal);
+                        }
+
                     }
                 });
                 break;
         }
-        var scene = new Scene(new StackPane(v), 1000, 1000);
+
+      
+
+        Button saveBtn = new Button("Save Image");
+
+        VBox root = new VBox(10, v, saveBtn);
+        Scene scene = new Scene(root);
+
+        //var scene = new Scene(new StackPane(v), 1000, 1000);
         stage.setScene(scene);
         stage.show();
     }
