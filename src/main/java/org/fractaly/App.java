@@ -174,9 +174,14 @@ public class App extends Application {
                                 zoomOut(fractal);
                                 break;
                             case MIDDLE:
-                                double scale = v.getBoundsInLocal().getHeight() / (WIDTH/2);
-                                double xOffset = scale * ( (HEIGHT/2) - mouseEvent.getX());
-                                double yOffset = scale * ( (WIDTH/2) - mouseEvent.getY());
+                                double width = v.getBoundsInLocal().getWidth();
+                                double centery = (WIDTH) / 2;
+                                double centerx = (HEIGHT) / 2;
+
+                                double scale = v.getBoundsInLocal().getHeight() / width;
+                                double xOffset = scale * (centerx - mouseEvent.getX());
+                                double yOffset = scale * (centery - mouseEvent.getY());
+
                                 v.setTranslateX(xOffset);
                                 v.setTranslateY(yOffset);
                                 break;
