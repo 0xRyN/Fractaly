@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -111,13 +112,14 @@ public class App extends Application {
                 f = build.juliaFunction(julia).buildJulia();
                 v = new ImageView(f);
                 final Fractal fract = f;
-                v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                v.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        int getClickCount = mouseEvent.getClickCount();
-                        if (getClickCount >= 2) {
-                            zoomIn(fract);
-                        } else {
+                        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                            if (mouseEvent.getClickCount() == 2) {
+                                zoomIn(fract);
+                            }
+                        }else{
                             zoomOut(fract);
                         }
                     }
@@ -127,12 +129,13 @@ public class App extends Application {
                 f = build.buildMandelbrot();
                 v = new ImageView(f);
                 final Fractal fractal = f;
-                v.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                v.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        int getClickCount = mouseEvent.getClickCount();
-                        if (getClickCount >= 2) {
-                            zoomIn(fractal);
+                        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                            if (mouseEvent.getClickCount() == 2) {
+                                zoomIn(fractal);
+                            }
                         } else {
                             zoomOut(fractal);
                         }
@@ -178,7 +181,7 @@ public class App extends Application {
         stage.show();
         
     }
-    public static void main(String[] args) throws ParseException, IOException {
+    public static void main(String[] args) throws ParseException, IOException, InterruptedException {
         Options options = new Options();
 
         OptionGroup mode = new OptionGroup();
@@ -216,7 +219,12 @@ public class App extends Application {
                 System.out.println("Please enter Y:");
                 String ya = sc.nextLine();
                 final double y = Double.parseDouble(ya);
+                
+                System.out.println("USAGE:");
+                System.out.println("[ZOOM]: Double Click on Primary Mouse");
+                System.out.println("[UNZOOM]: Other mouse click");
 
+                Thread.sleep(3000);
                 Application.launch(App.class,
                     "--function=" + getFunction,
                     "--x="+x,
