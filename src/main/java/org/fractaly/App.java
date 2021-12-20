@@ -1,6 +1,7 @@
 package org.fractaly;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
@@ -17,6 +18,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -57,19 +59,19 @@ public class App extends Application {
     private int hour = now.get(Calendar.HOUR_OF_DAY);
     private int minute = now.get(Calendar.MINUTE);
 
-    private static void saveToFile(Image image, String name) throws IOException{
+    private static void saveToFile(Image image, String name) throws IOException {
         File outputFile = new File(name);
         ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputFile);
     }
 
-    private static File createTextFile(String name){
+    private static File createTextFile(String name) {
         return new File(name + ".txt");
     }
 
-    private static void addDescription(File f, Double x, Double y, String function){
+    private static void addDescription(File f, Double x, Double y, String function) {
         try {
             FileWriter myWriter = new FileWriter(f);
-            myWriter.write("X: "+x+"| Y: "+y+" | Function: "+function);
+            myWriter.write("X: " + x + "| Y: " + y + " | Function: " + function);
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
@@ -80,19 +82,19 @@ public class App extends Application {
 
     public void zoom(Fractal fract, boolean bool) {
         Instant before = Instant.now();
-        if(bool){
+        if (bool) {
             zoomFactor += 0.1;
-        }else{
+        } else {
             zoomFactor -= 0.1;
         }
         Fractal.Builder newBuilder = new Fractal.Builder(fract).zoom(zoomFactor);
         Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(0, -0.8)); // Fonction Julia
         BiFunction<Integer, Integer, Color> color = (i, maxI) -> Color.hsb((i / (float) maxI) * 360, 0.7, 0.7);
-        Builder build =  new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(zoomFactor);
+        Builder build = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(color).juliaFunction(julia).zoom(zoomFactor);
         Fractal f = null;
-        if(fract.isMandelbrot()){
+        if (fract.isMandelbrot()) {
             f = build.buildMandelbrot();
-        }else{
+        } else {
 
             f = newBuilder.buildJulia();
         }
@@ -112,7 +114,7 @@ public class App extends Application {
         Builder build = new Fractal.Builder(WIDTH, HEIGHT);
         Fractal f = null;
 
-        switch(getFunction){
+        switch (getFunction) {
             case "j":
                 julia = c -> c.multiply(c).add(Complex.build(getX, getY));
                 f = build.juliaFunction(julia).buildJulia();
@@ -122,12 +124,13 @@ public class App extends Application {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         MouseButton gEvent = mouseEvent.getButton();
-                        switch(gEvent){
-                            default: case PRIMARY:
-                                zoom(fract,true);
+                        switch (gEvent) {
+                            default:
+                            case PRIMARY:
+                                zoom(fract, true);
                                 break;
                             case SECONDARY:
-                                zoom(fract,false);
+                                zoom(fract, false);
                                 break;
                             case MIDDLE:
                                 double width = v.getBoundsInLocal().getWidth();
@@ -140,13 +143,13 @@ public class App extends Application {
 
                                 v.setTranslateX(xOffset);
                                 v.setTranslateY(yOffset);
-                                break
-                            ;
+                                break;
                         }
                     }
                 });
                 break;
-            default: case "m":
+            default:
+            case "m":
                 f = build.buildMandelbrot();
                 v = new ImageView(f);
                 final Fractal fractal = f;
@@ -157,10 +160,10 @@ public class App extends Application {
                         switch (gEvent) {
                             default:
                             case PRIMARY:
-                                zoom(fractal,true);
+                                zoom(fractal, true);
                                 break;
                             case SECONDARY:
-                                zoom(fractal,false);
+                                zoom(fractal, false);
                                 break;
                             case MIDDLE:
                                 double width = v.getBoundsInLocal().getWidth();
@@ -180,12 +183,12 @@ public class App extends Application {
                 break;
         }
 
-        if(getFunction.equals("j")){
+        if (getFunction.equals("j")) {
             getFunction = "Julia";
-        }else{
+        } else {
             getFunction = "MandelBrot";
         }
-        
+
         VBox root = new VBox();
         var stackPane = new StackPane(v);
 
@@ -193,11 +196,11 @@ public class App extends Application {
         Button button = new Button("Save Image");
 
         final Fractal fra = f;
-        final String name = getFunction+"_"+day+"_"+hour+"_"+minute;
+        final String name = getFunction + "_" + day + "_" + hour + "_" + minute;
 
         button.setOnAction(e -> {
             try {
-                saveToFile(fra,name);
+                saveToFile(fra, name);
                 File description = createTextFile(name);
                 addDescription(description, .0, .0, name);
                 System.out.println("A description was created " + description.getName());
@@ -206,16 +209,24 @@ public class App extends Application {
             }
         });
         button.setVisible(true);
-        
+
         stackPane.getChildren().add(button);
         StackPane.setAlignment(button, Pos.BOTTOM_CENTER);
         root.getChildren().add(stackPane);
 
-        stage.setTitle("Image created with: "+getFunction);
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+        stage.setTitle("Image created with: " + getFunction);
         stage.setScene(scene);
         stage.show();
-        
+
     }
+
     public static void main(String[] args) throws ParseException, IOException, InterruptedException {
         Options options = new Options();
 
@@ -224,7 +235,7 @@ public class App extends Application {
         mode.addOption(new Option("t", "terminal", false, "Use only terminal"));
         mode.setRequired(true);
         options.addOptionGroup(mode);
-      
+
         OptionGroup fun = new OptionGroup();
         fun.addOption(new Option("m", "mandelbrot", false, "Use MandelBrot function"));
         fun.addOption(new Option("j", "julia", false, "Use Julia function"));
@@ -243,7 +254,7 @@ public class App extends Application {
         // ***Interrogation Stage***
         String getFunction = "";
         Fractal fract;
-        
+
         if (cmd.hasOption("g")) {
             System.out.println("Welcome on the GUI!");
             // Laucnh choice menu etc
@@ -257,7 +268,7 @@ public class App extends Application {
                 System.out.println("Please enter Y:");
                 String ya = sc.nextLine();
                 final double y = Double.parseDouble(ya);
-                
+
                 System.out.println("USAGE:");
                 System.out.println("[ZOOM]:  Click on Primary Mouse");
                 System.out.println("[UNZOOM]: Click on Second Mouse");
@@ -266,26 +277,25 @@ public class App extends Application {
 
                 Thread.sleep(3000);
                 Application.launch(App.class,
-                    "--function=" + getFunction,
-                    "--x="+x,
-                    "--y="+y
-                );
+                        "--function=" + getFunction,
+                        "--x=" + x,
+                        "--y=" + y);
             }
         }
 
         String name = "";
 
-        if(cmd.hasOption("t")){    
+        if (cmd.hasOption("t")) {
             System.out.println("Welcome on the terminal!");
-            
+
             Calendar now_ = Calendar.getInstance();
             final int day_ = now_.get(Calendar.DAY_OF_MONTH);
             final int hour_ = now_.get(Calendar.HOUR_OF_DAY);
             final int minute_ = now_.get(Calendar.MINUTE);
 
-            if(cmd.hasOption("m")){
+            if (cmd.hasOption("m")) {
                 fract = new Fractal.Builder(WIDTH, HEIGHT).buildMandelbrot();
-                
+
                 name = "MandelBrot_" + day_ + "_" + hour_ + "_" + minute_;
                 File outputFile = new File(name);
                 ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
@@ -293,7 +303,7 @@ public class App extends Application {
                 File description = createTextFile(outputFile.getName());
                 addDescription(description, .0, .0, "Mandelbrot");
                 System.out.println("A description was created " + description.getName());
-            }else{ 
+            } else {
                 if (cmd.hasOption("j")) {
                     try (Scanner sc = new Scanner(System.in)) {
                         System.out.println("Please enter X:");
@@ -303,25 +313,25 @@ public class App extends Application {
                         String ya = sc.nextLine();
                         final double y = Double.parseDouble(ya);
 
-                        Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y)); 
-                        fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia(); 
+                        Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y));
+                        fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia();
 
                         name = "Julia_" + day_ + "_" + hour_ + "_" + minute_;
                         File outputFile = new File(name);
 
                         ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
-                        System.out.println("An image was created: "+outputFile.getName());
+                        System.out.println("An image was created: " + outputFile.getName());
                         File description = createTextFile(outputFile.getName());
                         addDescription(description, x, y, "Julia");
                         System.out.println("A description was created " + description.getName());
 
                     }
-                }else{
+                } else {
                     formatter.printHelp("AppTester", options, true);
                 }
 
             }
-                
+
         }
     }
 

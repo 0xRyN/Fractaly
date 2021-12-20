@@ -7,7 +7,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.fractaly.ComputeFractal;
+import org.fractaly.model.ComputeFractal;
 import org.fractaly.utils.Complex;
 
 public class Fractal extends WritableImage {
@@ -92,9 +92,9 @@ public class Fractal extends WritableImage {
         public Builder(Fractal data) {
             this.w = data.w;
             this.h = data.h;
-            this.maxIter = data.maxIter; 
+            this.maxIter = data.maxIter;
             this.zoom = data.zoom;
-            this.juliaFunction = data.juliaFunction; 
+            this.juliaFunction = data.juliaFunction;
             this.colorFunction = data.colorFunction;
         }
 
@@ -168,8 +168,6 @@ public class Fractal extends WritableImage {
             pool.invoke(f);
             return res;
         }
-
-        
 
     }
 
