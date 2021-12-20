@@ -15,7 +15,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -26,7 +25,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Scanner;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import javax.imageio.ImageIO;
@@ -73,6 +71,7 @@ public class App extends Application {
             myWriter.write("X: " + x + "| Y: " + y + " | Function: " + function);
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
+            System.out.println("A description was created " + f.getName());
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -90,8 +89,8 @@ public class App extends Application {
             Thread.sleep(5000);
         } catch (Exception e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
-        ;
     }
 
     public void move(double offsetX, double offsetY) {
@@ -150,17 +149,19 @@ public class App extends Application {
                     case SECONDARY:
                         zoom(false);
                         break;
-                    case MIDDLE:
-                        double width = v.getBoundsInLocal().getWidth();
-                        double centery = (WIDTH) / 2;
-                        double centerx = (HEIGHT) / 2;
-
-                        double scale = v.getBoundsInLocal().getHeight() / width;
-                        double xOffset = scale * (centerx - mouseEvent.getX());
-                        double yOffset = scale * (centery - mouseEvent.getY());
-
-                        move(xOffset, yOffset);
-                        break;
+                    /*
+                     * case MIDDLE:
+                     * double width = v.getBoundsInLocal().getWidth();
+                     * double centery = (WIDTH) / 2.0;
+                     * double centerx = (HEIGHT) / 2.0;
+                     * 
+                     * double scale = v.getBoundsInLocal().getHeight() / width;
+                     * double xOffset = scale * (centerx - mouseEvent.getX());
+                     * double yOffset = scale * (centery - mouseEvent.getY());
+                     * 
+                     * move(xOffset, yOffset);
+                     * break;
+                     */
                 }
             }
         });
@@ -252,7 +253,6 @@ public class App extends Application {
                 saveToFile(fra, name);
                 File description = createTextFile(name);
                 addDescription(description, .0, .0, name);
-                System.out.println("A description was created " + description.getName());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -314,6 +314,8 @@ public class App extends Application {
                 String ya = sc.nextLine();
                 final double y = Double.parseDouble(ya);
 
+                sc.close();
+
                 // Print instructions
                 printInstructions();
 
@@ -347,21 +349,20 @@ public class App extends Application {
         if (cmd.hasOption("t")) {
             System.out.println("Welcome on the terminal!");
 
-            Calendar now_ = Calendar.getInstance();
-            final int day_ = now_.get(Calendar.DAY_OF_MONTH);
-            final int hour_ = now_.get(Calendar.HOUR_OF_DAY);
-            final int minute_ = now_.get(Calendar.MINUTE);
+            Calendar now = Calendar.getInstance();
+            final int day = now.get(Calendar.DAY_OF_MONTH);
+            final int hour = now.get(Calendar.HOUR_OF_DAY);
+            final int minute = now.get(Calendar.MINUTE);
 
             if (cmd.hasOption("m")) {
                 fract = new Fractal.Builder(WIDTH, HEIGHT).buildMandelbrot();
 
-                name = "MandelBrot_" + day_ + "_" + hour_ + "_" + minute_;
+                name = "MandelBrot_" + day + "_" + hour + "_" + minute;
                 File outputFile = new File(name);
                 ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                 System.out.println("An image was created: " + outputFile.getName());
                 File description = createTextFile(outputFile.getName());
                 addDescription(description, .0, .0, "Mandelbrot");
-                System.out.println("A description was created " + description.getName());
             } else {
                 if (cmd.hasOption("j")) {
                     try (Scanner sc = new Scanner(System.in)) {
@@ -375,15 +376,13 @@ public class App extends Application {
                         Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y));
                         fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia();
 
-                        name = "Julia_" + day_ + "_" + hour_ + "_" + minute_;
+                        name = "Julia_" + day + "_" + hour + "_" + minute;
                         File outputFile = new File(name);
 
                         ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                         System.out.println("An image was created: " + outputFile.getName());
                         File description = createTextFile(outputFile.getName());
                         addDescription(description, x, y, "Julia");
-                        System.out.println("A description was created " + description.getName());
-
                     }
                 } else {
                     formatter.printHelp("AppTester", options, true);
