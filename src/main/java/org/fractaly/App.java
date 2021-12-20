@@ -260,26 +260,35 @@ public class App extends Application {
             // Laucnh choice menu etc
 
             getFunction = fun.getSelected();
+            if(cmd.hasOption("j"))
+                try (Scanner sc = new Scanner(System.in)) {
+                    System.out.println("Please enter X:");
+                    String xa = sc.nextLine();
+                    final Double x = Double.parseDouble(xa);
+                    System.out.println("Please enter Y:");
+                    String ya = sc.nextLine();
+                    final double y = Double.parseDouble(ya);
 
-            try (Scanner sc = new Scanner(System.in)) {
-                System.out.println("Please enter X:");
-                String xa = sc.nextLine();
-                final Double x = Double.parseDouble(xa);
-                System.out.println("Please enter Y:");
-                String ya = sc.nextLine();
-                final double y = Double.parseDouble(ya);
+                    System.out.println("USAGE:");
+                    System.out.println("[ZOOM]:  Click on Primary Mouse");
+                    System.out.println("[UNZOOM]: Click on Second Mouse");
+                    System.out.println("[MOVE]: Click on Middle Mouse");
+                    System.out.println("You got three seconds to read this instructions");
 
-                System.out.println("USAGE:");
-                System.out.println("[ZOOM]:  Click on Primary Mouse");
-                System.out.println("[UNZOOM]: Click on Second Mouse");
-                System.out.println("[MOVE]: Click on Middle Mouse");
-                System.out.println("You got three seconds to read this instructions");
-
-                Thread.sleep(3000);
-                Application.launch(App.class,
-                        "--function=" + getFunction,
-                        "--x=" + x,
-                        "--y=" + y);
+                    Thread.sleep(3000);
+                    Application.launch(App.class,
+                            "--function=" + getFunction,
+                            "--x=" + x,
+                            "--y=" + y);
+            }else{
+                if (cmd.hasOption("m")) {
+                    Application.launch(App.class,
+                            "--function=" + getFunction,
+                            "--x=" + 0,
+                            "--y=" + 0);
+                }
+                formatter.printHelp("AppTester", options, true);
+                throw new IllegalArgumentException();
             }
         }
 
@@ -328,6 +337,7 @@ public class App extends Application {
                     }
                 } else {
                     formatter.printHelp("AppTester", options, true);
+                    throw new IllegalArgumentException();
                 }
 
             }
