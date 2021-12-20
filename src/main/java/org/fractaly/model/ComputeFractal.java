@@ -16,6 +16,8 @@ public class ComputeFractal extends RecursiveAction {
     private final int w;
     private final int h;
     private final double zoom;
+    private final double offsetX;
+    private final double offsetY;
     private Fractal fractal;
     public static int threads = 0;
 
@@ -24,6 +26,8 @@ public class ComputeFractal extends RecursiveAction {
         this.w = fractal.getW();
         this.h = fractal.getH();
         this.zoom = fractal.getZoom();
+        this.offsetX = fractal.getOffsetX();
+        this.offsetY = fractal.getOffsetY();
         this.start = start;
         this.size = size;
         this.fractal = fractal;
@@ -42,8 +46,15 @@ public class ComputeFractal extends RecursiveAction {
             int y = k / w; // Height - j index
             int x = k - (y * w); // Width - i index
 
-            double zx = (-1 + x * (2.0 / this.w)) / zoom;
-            double zy = (-1 + y * (2.0 / this.h)) / zoom;
+            /*
+             * OFFSET GUIDE (OFFSET IS IN PIXELS) :
+             * Positive offset x : Image goes right
+             * Negative offset x : Images goes left
+             * Positive offset y : Image goes up
+             * Negative offset y : Image goes down
+             */
+            double zx = ((-2 + (x + offsetX) * (4.0 / this.w)) / zoom);
+            double zy = ((-2 + (y + offsetY) * (4.0 / this.h)) / zoom);
             Complex z = Complex.build(zx, zy);
 
             int iter = 0;
