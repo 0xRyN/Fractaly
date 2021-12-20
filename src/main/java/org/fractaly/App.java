@@ -293,7 +293,7 @@ public class App extends Application {
 
             if(cmd.hasOption("m")){
                 fract = new Fractal.Builder(WIDTH, HEIGHT).buildMandelbrot();
-                name = "mandelbrot" + day + "_" + hour + "_" + minute;
+                name = "MandelBrot_" + day + "_" + hour + "_" + minute;
                 File outputFile = new File(name);
                 ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                 System.out.println("An image was created: " + outputFile.getName());
@@ -311,7 +311,7 @@ public class App extends Application {
                         fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia(); 
 
                 
-                        name = "julia_" + day + "_" + hour + "_" + minute;
+                        name = "Julia_" + day + "_" + hour + "_" + minute;
                         File outputFile = new File(name);
 
                         ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
