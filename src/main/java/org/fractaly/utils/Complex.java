@@ -3,6 +3,7 @@ package org.fractaly.utils;
 import java.util.Objects;
 
 // Immutable.
+
 public class Complex {
     private final double re;
     private final double im;

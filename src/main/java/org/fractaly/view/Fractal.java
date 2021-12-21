@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.fractaly.model.ComputeFractal;
 import org.fractaly.utils.Complex;
@@ -18,12 +19,12 @@ public class Fractal extends WritableImage {
     private final double zoom; // Optional
     private final double offsetX; // Optional
     private final double offsetY; // Optional
-    private final Function<Complex, Complex> juliaFunction; // Optional
+    private final UnaryOperator<Complex> juliaFunction; // Optional
     private final BiFunction<Integer, Integer, Color> colorFunction;
     private final boolean isMandelbrot;
 
     private Fractal(int w, int h, int maxIter, double zoom, double offsetX, double offsetY,
-            Function<Complex, Complex> juliaFunction,
+            UnaryOperator<Complex> juliaFunction,
             BiFunction<Integer, Integer, Color> colorFunction, boolean isMandelbrot) {
         super(w, h);
         this.w = w;
@@ -69,7 +70,7 @@ public class Fractal extends WritableImage {
         return colorFunction;
     }
 
-    public Function<Complex, Complex> getJuliaFunction() {
+    public UnaryOperator<Complex> getJuliaFunction() {
         return juliaFunction;
     }
 
@@ -81,7 +82,7 @@ public class Fractal extends WritableImage {
         private double zoom; // Optional
         private double offsetX;
         private double offsetY;
-        private Function<Complex, Complex> juliaFunction; // Optional
+        private UnaryOperator<Complex> juliaFunction; // Optional
         private BiFunction<Integer, Integer, Color> colorFunction; // Optional
 
         /**
@@ -98,7 +99,7 @@ public class Fractal extends WritableImage {
         public Builder(int w, int h) {
             this.w = w;
             this.h = h;
-            this.maxIter = 1200; // Default values
+            this.maxIter = 350; // Default values
             this.zoom = 1.0;
             this.offsetX = 0;
             this.offsetY = 0;
@@ -168,7 +169,7 @@ public class Fractal extends WritableImage {
          *          fractals. You can use a lambda, ie : c -> z.multiply(z).add(c)
          * @return Builder, you can continue piping commands.
          */
-        public Builder juliaFunction(Function<Complex, Complex> juliaFunction) {
+        public Builder juliaFunction(UnaryOperator<Complex> juliaFunction) {
             this.juliaFunction = juliaFunction;
             return this;
         }

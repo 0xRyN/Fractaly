@@ -40,6 +40,7 @@ import java.util.Calendar;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import javax.imageio.ImageIO;
 
@@ -62,6 +63,7 @@ import org.fractaly.view.Fractal.Builder;
  */
 public class App extends Application {
 
+    private static final String AP_STRING = "AppTest";
     private static final int WIDTH = 1000;
     private static final int HEIGHT = 1000;
     private ImageView v;
@@ -74,6 +76,7 @@ public class App extends Application {
     private static void saveToFile(Image image, String name) throws IOException {
         File outputFile = new File(name);
         ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputFile);
+        System.out.println("An image was created: " + outputFile.getName()+"png");
     }
 
     private static File createTextFile(String name) {
@@ -164,18 +167,16 @@ public class App extends Application {
     public void addEventListeners(Scene scene, Stage stage) {
 
         // For Zoom / Zoom out / Movement with mouse
-        v.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                MouseButton gEvent = mouseEvent.getButton();
-                switch (gEvent) {
-                    default:
-                    case PRIMARY:
-                        zoom(true);
-                        break;
-                    case SECONDARY:
-                        zoom(false);
-                        break;
+        v.setOnMouseClicked( ev -> {
+            MouseButton gEvent = ev.getButton();
+            switch (gEvent) {
+                default:
+                case PRIMARY:
+                    zoom(true);
+                    break;
+                case SECONDARY:
+                    zoom(false);
+                    break;
                     /*
                      * case MIDDLE:
                      * double width = v.getBoundsInLocal().getWidth();
@@ -189,12 +190,10 @@ public class App extends Application {
                      * move(xOffset, yOffset);
                      * break;
                      */
-                }
             }
         });
 
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-            public void handle(KeyEvent ke) {
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
                 if (ke.getCode() == KeyCode.UP) {
                     move(0, -20);
                     ke.consume(); // <-- stops passing the event to next node
@@ -224,16 +223,12 @@ public class App extends Application {
                     zoom(false);
                     ke.consume(); // <-- stops passing the event to next node
                 }
-            }
         });
 
         // When window closes, close all threads and exit the program
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                Platform.exit();
-                System.exit(0);
-            }
+        stage.setOnCloseRequest( ev -> {
+            Platform.exit();
+            System.exit(0);
         });
     }
 
@@ -249,7 +244,7 @@ public class App extends Application {
         Fractal f = null;
         switch (getFunction) {
             case "j":
-                Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(getX, getY));
+                UnaryOperator<Complex> julia = c -> c.multiply(c).add(Complex.build(getX, getY));
                 f = build.juliaFunction(julia).buildJulia();
                 break;
             case "m":
@@ -273,13 +268,14 @@ public class App extends Application {
         Button button = new Button("Save Image");
 
         final Fractal fra = f;
+        final String function = getFunction;
         final String name = getFunction + "_" + day + "_" + hour + "_" + minute;
 
         button.setOnAction(e -> {
             try {
-                saveToFile(fra, name);
+                saveToFile(v.snapshot(null, fra), name);
                 File description = createTextFile(name);
-                addDescription(description, .0, .0, name);
+                addDescription(description, getX, getY, function);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -311,7 +307,7 @@ public class App extends Application {
 
     }
 
-    public static void main(String[] args) throws ParseException, IOException, InterruptedException {
+    public static void main(String[] args) throws ParseException, IOException {
         Options options = new Options();
 
         OptionGroup mode = new OptionGroup();
@@ -327,7 +323,7 @@ public class App extends Application {
         options.addOptionGroup(fun);
 
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("AppTester", options, true);
+        formatter.printHelp(AP_STRING, options, true);
 
         // ***Parsing Stage***
         CommandLineParser parser = new DefaultParser();
@@ -379,7 +375,7 @@ public class App extends Application {
             }
 
             else {
-                formatter.printHelp("AppTester", options, true);
+                formatter.printHelp(AP_STRING, options, true);
                 throw new IllegalArgumentException();
             }
         }
@@ -412,8 +408,7 @@ public class App extends Application {
                         System.out.println("Please enter Y:");
                         String ya = sc.nextLine();
                         final double y = Double.parseDouble(ya);
-
-                        Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y));
+                        UnaryOperator<Complex> julia = c -> c.multiply(c).add(Complex.build(x, y));
                         fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia();
 
                         name = "Julia_" + day + "_" + hour + "_" + minute;
@@ -425,7 +420,7 @@ public class App extends Application {
                         addDescription(description, x, y, "Julia");
                     }
                 } else {
-                    formatter.printHelp("AppTester", options, true);
+                    formatter.printHelp(AP_STRING, options, true);
                     throw new IllegalArgumentException();
                 }
 
