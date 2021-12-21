@@ -35,6 +35,18 @@ public class ComputeFractal extends RecursiveAction {
 
     protected void computeDirectly() {
         for (int k = start; k < start + size; k++) {
+            double ratioX;
+            double ratioY;
+
+            if (w > h) {
+                ratioX = (double) w / h;
+                ratioY = 1;
+            }
+
+            else {
+                ratioX = 1;
+                ratioY = (double) h / w;
+            }
             /*
              * HOW IT WORKS
              * Size = width * height.
@@ -53,8 +65,8 @@ public class ComputeFractal extends RecursiveAction {
              * Positive offset y : Image goes up
              * Negative offset y : Image goes down
              */
-            double zx = ((-4 + (x + offsetX) * (8.0 / this.w)) / zoom);
-            double zy = ((-2 + (y + offsetY) * (4.0 / this.h)) / zoom);
+            double zx = (((ratioX * -1) + (x + offsetX) * ((ratioX * 2.0) / this.w)) / zoom);
+            double zy = (((ratioY * -1) + (y + offsetY) * ((ratioY * 2.0) / this.h)) / zoom);
             Complex z = Complex.build(zx, zy);
 
             int iter = 0;

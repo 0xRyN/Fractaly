@@ -47,7 +47,7 @@ import org.fractaly.view.Fractal.Builder;
  */
 public class App extends Application {
 
-    private static final int WIDTH = 1500;
+    private static final int WIDTH = 674;
     private static final int HEIGHT = 1000;
     private ImageView v;
 
