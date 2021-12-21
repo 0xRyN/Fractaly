@@ -277,7 +277,11 @@ public class App extends Application {
         Scene scene = new Scene(root, WIDTH, HEIGHT);
 
         final Fractal fra = f;
-        String function = getFunction;
+        Fractal colorFractal = (Fractal) v.getImage();
+        Fractal.Builder newBuilder = new Fractal.Builder(colorFractal).zoom(colorFractal.getZoom())
+                .offsetX(colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY());
+                
+        String function = colorFractal.isMandelbrot() ? "MandelBrot" : "Julia";
         final String name = getFunction + "_" + day + "_" + hour + "_" + minute;
 
         // For GUI controlled user input
@@ -307,12 +311,10 @@ public class App extends Application {
         menu.getItems().add(menuItem2);
         menuBar.getMenus().add(menu);
 
-        Fractal colorFractal = (Fractal) v.getImage();
-        Fractal.Builder newBuilder = new Fractal.Builder(colorFractal).zoom(colorFractal.getZoom()).offsetX(colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY());
-
         MenuItem menuItem3 = new MenuItem("MandelBrot");
         menuItem3.setOnAction(e -> {
             v.setImage(newBuilder.buildMandelbrot());
+
         });
         menu.getItems().add(menuItem3);
 
@@ -326,7 +328,7 @@ public class App extends Application {
         menuItem11.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                if(function.equals("MandelBrot")){
+                if(colorFractal.isMandelbrot()){
                     v.setImage(newBuilder.colorFunction(FractalColors.BLUE_SCALE).buildMandelbrot());
                 }else{
                     v.setImage(newBuilder.colorFunction(FractalColors.BLUE_SCALE).buildJulia());
@@ -336,7 +338,7 @@ public class App extends Application {
         menuItem12.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                if (function.equals("MandelBrot")) {
+                if (colorFractal.isMandelbrot()) {
                     v.setImage(newBuilder.colorFunction(FractalColors.GREEN_SCALE).buildMandelbrot());
                 } else {
                     v.setImage(newBuilder.colorFunction(FractalColors.GREEN_SCALE).buildJulia());
@@ -346,7 +348,7 @@ public class App extends Application {
         menuItem13.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                if (function.equals("MandelBrot")) {
+                if (colorFractal.isMandelbrot()) {
                     v.setImage(newBuilder.colorFunction(FractalColors.GRAY_SCALE).buildMandelbrot());
                 } else {
                     v.setImage(newBuilder.colorFunction(FractalColors.GRAY_SCALE).buildJulia());
@@ -356,7 +358,7 @@ public class App extends Application {
         menuItem14.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                if (function.equals("MandelBrot")) {
+                if (colorFractal.isMandelbrot()) {
                     v.setImage(newBuilder.colorFunction(FractalColors.RED_SCALE).buildMandelbrot());
                 } else {
                     v.setImage(newBuilder.colorFunction(FractalColors.RED_SCALE).buildJulia());
