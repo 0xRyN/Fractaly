@@ -313,34 +313,32 @@ public class App extends Application {
         MenuItem menuItem12 = new MenuItem("Green");
         MenuItem menuItem13 = new MenuItem("Gray");
         MenuItem menuItem14 = new MenuItem("Red");
-        final Fractal colorFractal = f;
+
+        Fractal colorFractal = (Fractal) v.getImage();
+        Fractal.Builder newBuilder = new Fractal.Builder(colorFractal).zoom(colorFractal.getZoom()).offsetX(colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY());
+        
         menuItem11.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                v.setImage(build.colorFunction(FractalColors.BLUE_SCALE).offsetX(
-                        colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY()).zoom(colorFractal.getZoom()).buildJulia());
+                v.setImage(newBuilder.colorFunction(FractalColors.BLUE_SCALE).buildJulia());
             }
         });
         menuItem12.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                v.setImage(build.colorFunction(FractalColors.GREEN_SCALE).offsetX(
-                        colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY()).zoom(colorFractal.getZoom()).buildJulia());
+                v.setImage(newBuilder.colorFunction(FractalColors.GREEN_SCALE).buildJulia());
             }
         });
         menuItem13.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                v.setImage(build.colorFunction(FractalColors.GRAY_SCALE).offsetX(
-                        colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY()).zoom(colorFractal.getZoom()).buildJulia());
+                v.setImage(newBuilder.colorFunction(FractalColors.GRAY_SCALE).buildJulia());
             }
         });
         menuItem14.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                v.setImage(build.colorFunction(FractalColors.RED_SCALE).offsetX(
-                        colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY()).zoom(colorFractal.getZoom())
-                        .buildJulia());
+                v.setImage(newBuilder.colorFunction(FractalColors.RED_SCALE).buildJulia());
             }
         });
 
