@@ -47,7 +47,7 @@ import org.fractaly.view.Fractal.Builder;
  */
 public class App extends Application {
 
-    private static final int WIDTH = 1000;
+    private static final int WIDTH = 1500;
     private static final int HEIGHT = 1000;
     private ImageView v;
 
@@ -97,8 +97,8 @@ public class App extends Application {
         Fractal fract = (Fractal) v.getImage();
         Instant before = Instant.now();
         // Adding old offset makes it not very intuitive
-        double resOffsetX = -(Math.abs(fract.getOffsetX()) + offsetX);
-        double resOffsetY = -(Math.abs(fract.getOffsetY()) + offsetY);
+        double resOffsetX = (fract.getOffsetX() + offsetX);
+        double resOffsetY = (fract.getOffsetY() + offsetY);
         Fractal.Builder newBuilder = new Fractal.Builder(fract).offsetX(resOffsetX).offsetY(resOffsetY);
         Fractal f = null;
         if (fract.isMandelbrot()) {
@@ -169,22 +169,22 @@ public class App extends Application {
         scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             public void handle(KeyEvent ke) {
                 if (ke.getCode() == KeyCode.UP) {
-                    move(0, 20);
-                    ke.consume(); // <-- stops passing the event to next node
-                }
-
-                else if (ke.getCode() == KeyCode.DOWN) {
                     move(0, -20);
                     ke.consume(); // <-- stops passing the event to next node
                 }
 
+                else if (ke.getCode() == KeyCode.DOWN) {
+                    move(0, 20);
+                    ke.consume(); // <-- stops passing the event to next node
+                }
+
                 else if (ke.getCode() == KeyCode.RIGHT) {
-                    move(-20, 0);
+                    move(20, 0);
                     ke.consume(); // <-- stops passing the event to next node
                 }
 
                 else if (ke.getCode() == KeyCode.LEFT) {
-                    move(20, 0);
+                    move(-20, 0);
                     ke.consume(); // <-- stops passing the event to next node
                 }
 

@@ -53,7 +53,7 @@ public class ComputeFractal extends RecursiveAction {
              * Positive offset y : Image goes up
              * Negative offset y : Image goes down
              */
-            double zx = ((-2 + (x + offsetX) * (4.0 / this.w)) / zoom);
+            double zx = ((-4 + (x + offsetX) * (8.0 / this.w)) / zoom);
             double zy = ((-2 + (y + offsetY) * (4.0 / this.h)) / zoom);
             Complex z = Complex.build(zx, zy);
 
