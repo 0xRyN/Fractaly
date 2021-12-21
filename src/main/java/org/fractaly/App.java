@@ -246,13 +246,14 @@ public class App extends Application {
         Button button = new Button("Save Image");
 
         final Fractal fra = f;
+        final String function = getFunction;
         final String name = getFunction + "_" + day + "_" + hour + "_" + minute;
 
         button.setOnAction(e -> {
             try {
                 saveToFile(fra, name);
                 File description = createTextFile(name);
-                addDescription(description, .0, .0, name);
+                addDescription(description, getX, getY, function);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -271,7 +272,7 @@ public class App extends Application {
 
     }
 
-    public static void main(String[] args) throws ParseException, IOException, InterruptedException {
+    public static void main(String[] args) throws ParseException, IOException {
         Options options = new Options();
 
         OptionGroup mode = new OptionGroup();
