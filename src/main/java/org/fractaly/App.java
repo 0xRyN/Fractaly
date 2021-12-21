@@ -80,11 +80,12 @@ public class App extends Application {
     private int minute = now.get(Calendar.MINUTE);
     private double getIm;
     private double getRe;
+    private String getNFunction;
 
     private static void saveToFile(Image image, String name) throws IOException {
         File outputFile = new File(name);
         ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputFile);
-        System.out.println("An image was created: " + outputFile.getName()+"png");
+        System.out.println("An image was created: " + outputFile.getName()+".png");
     }
 
     private static File createTextFile(String name) {
@@ -135,6 +136,7 @@ public class App extends Application {
         Duration d = Duration.between(before, Instant.now());
         System.out.println("It took " + d.toString() + " to render.");
         getComplexe(re, im);
+        getNFunction = "Julia";
     }
 
     public void changeJulia(BiFunction<Integer, Integer, Color> color) {
@@ -142,7 +144,8 @@ public class App extends Application {
         Fractal.Builder newBuilder = new Fractal.Builder(fract).colorFunction(color);
         Fractal f = null;
         f = newBuilder.buildJulia();
-        v.setImage(f);        
+        v.setImage(f);  
+        getNFunction = "Julia";      
     }
 
     public void changeMandelbrot() {
@@ -154,6 +157,7 @@ public class App extends Application {
         v.setImage(f);
         Duration d = Duration.between(before, Instant.now());
         System.out.println("It took " + d.toString() + " to render.");
+        getNFunction = "MandelBrot";
     }
 
     public void changeMandelbrot(BiFunction<Integer, Integer, Color> color) {
@@ -165,11 +169,12 @@ public class App extends Application {
         v.setImage(f);
         Duration d = Duration.between(before, Instant.now());
         System.out.println("It took " + d.toString() + " to render.");
+        getNFunction = "MandelBrot";
     }
 
     public boolean isMandelBrot() {
         Fractal fract = (Fractal) v.getImage();
-        return fract.isMandelbrot() ? true : false;
+        return fract.isMandelbrot();
     }
 
     public void move(double offsetX, double offsetY) {
@@ -303,9 +308,9 @@ public class App extends Application {
         v = new ImageView(f);
 
         if (getFunction.equals("j")) {
-            getFunction = "Julia";
+            getNFunction = "Julia";
         } else {
-            getFunction = "MandelBrot";
+            getNFunction = "MandelBrot";
         }
 
         VBox root = new VBox();
@@ -315,9 +320,6 @@ public class App extends Application {
 
         final Fractal fra = f;
 
-        String function = isMandelBrot() ? "MandelBrot" : "Julia";
-        final String name = getFunction + "_" + day + "_" + hour + "_" + minute;
-
         // For GUI controlled user input
     
         MenuBar menuBar = new MenuBar();
@@ -326,9 +328,10 @@ public class App extends Application {
 
         menuItem1.setOnAction(e -> {
             try {
+                String name = getNFunction + "_" + day + "_" + hour + "_" + minute;
                 saveToFile(v.snapshot(null, fra), name);
                 File description = createTextFile(name);
-                addDescription(description, getRe, getIm, function);
+                addDescription(description, getRe, getIm, getNFunction);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
