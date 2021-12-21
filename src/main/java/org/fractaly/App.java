@@ -3,6 +3,7 @@ package org.fractaly;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -274,7 +275,6 @@ public class App extends Application {
         var stackPane = new StackPane(v);
 
         Scene scene = new Scene(root, WIDTH, HEIGHT);
-        Button button = new Button("Save Image");
 
         final Fractal fra = f;
         final String function = getFunction;
@@ -306,6 +306,49 @@ public class App extends Application {
         });
         menu.getItems().add(menuItem2);
         menuBar.getMenus().add(menu);
+
+
+        Menu subMenu = new Menu("Colors");
+        MenuItem menuItem11 = new MenuItem("Blue");
+        MenuItem menuItem12 = new MenuItem("Green");
+        MenuItem menuItem13 = new MenuItem("Gray");
+        MenuItem menuItem14 = new MenuItem("Red");
+        final Fractal colorFractal = f;
+        menuItem11.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                v.setImage(build.colorFunction(FractalColors.BLUE_SCALE).offsetX(
+                        colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY()).zoom(colorFractal.getZoom()).buildJulia());
+            }
+        });
+        menuItem12.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                v.setImage(build.colorFunction(FractalColors.GREEN_SCALE).offsetX(
+                        colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY()).zoom(colorFractal.getZoom()).buildJulia());
+            }
+        });
+        menuItem13.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                v.setImage(build.colorFunction(FractalColors.GRAY_SCALE).offsetX(
+                        colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY()).zoom(colorFractal.getZoom()).buildJulia());
+            }
+        });
+        menuItem14.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                v.setImage(build.colorFunction(FractalColors.RED_SCALE).offsetX(
+                        colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY()).zoom(colorFractal.getZoom())
+                        .buildJulia());
+            }
+        });
+
+        subMenu.getItems().add(menuItem11);
+        subMenu.getItems().add(menuItem12);
+        subMenu.getItems().add(menuItem13);
+        subMenu.getItems().add(menuItem14);
+        menu.getItems().add(subMenu);
 
         root.getChildren().add(menuBar);
         root.getChildren().add(stackPane);
