@@ -10,7 +10,7 @@ import org.fractaly.view.Fractal;
 public class ComputeFractal extends RecursiveAction {
 
     // If image is less or equal to 100x100 = 10000, compute it directly
-    private final int threshold = 10000;
+    private final int threshold;
     private final int start;
     private final int size;
     private final int w;
@@ -25,6 +25,7 @@ public class ComputeFractal extends RecursiveAction {
         threads++;
         this.w = fractal.getW();
         this.h = fractal.getH();
+        this.threshold = (w * h) / 100; // Each thread computes 1% of the image.
         this.zoom = fractal.getZoom();
         this.offsetX = fractal.getOffsetX();
         this.offsetY = fractal.getOffsetY();
@@ -91,8 +92,8 @@ public class ComputeFractal extends RecursiveAction {
     // https://docs.oracle.com/javase/tutorial/essential/concurrency/examples/ForkBlur.java
     @Override
     protected void compute() {
-        // System.out.println("Thread no : " + threads + " - Start : " + start + ", End
-        // : " + (start + size));
+        System.out.println(
+                "Task no : " + threads + " given to Thread Pool - Start : " + start + ", End: " + (start + size));
         if (size <= threshold) {
             computeDirectly();
             return;
