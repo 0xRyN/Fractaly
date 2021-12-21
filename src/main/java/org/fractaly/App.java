@@ -72,6 +72,8 @@ public class App extends Application {
     private int day = now.get(Calendar.DAY_OF_MONTH);
     private int hour = now.get(Calendar.HOUR_OF_DAY);
     private int minute = now.get(Calendar.MINUTE);
+    private double getIm;
+    private double getRe;
 
     private static void saveToFile(Image image, String name) throws IOException {
         File outputFile = new File(name);
@@ -111,6 +113,11 @@ public class App extends Application {
         }
     }
 
+    public void getComplexe(double re, double im){
+        getRe = re;
+        getIm = im;
+    }
+
     public void changeJulia(double re, double im) {
         Fractal fract = (Fractal) v.getImage();
         Instant before = Instant.now();
@@ -121,6 +128,7 @@ public class App extends Application {
         v.setImage(f);
         Duration d = Duration.between(before, Instant.now());
         System.out.println("It took " + d.toString() + " to render.");
+        getComplexe(re, im);
     }
 
     public void move(double offsetX, double offsetY) {
@@ -236,15 +244,13 @@ public class App extends Application {
     public void start(Stage stage) {
         Parameters params = getParameters();
         String getFunction = params.getNamed().get("function");
-        double getX = Double.parseDouble(params.getNamed().get("x"));
-        double getY = Double.parseDouble(params.getNamed().get("y"));
 
         // Builds and displays a fractal based on arguments.
         Builder build = new Fractal.Builder(WIDTH, HEIGHT).colorFunction(FractalColors.RED_SCALE);
         Fractal f = null;
         switch (getFunction) {
             case "j":
-                UnaryOperator<Complex> julia = c -> c.multiply(c).add(Complex.build(getX, getY));
+                UnaryOperator<Complex> julia = c -> c.multiply(c).add(Complex.build(getRe, getIm));
                 f = build.juliaFunction(julia).buildJulia();
                 break;
             case "m":
@@ -275,7 +281,7 @@ public class App extends Application {
             try {
                 saveToFile(v.snapshot(null, fra), name);
                 File description = createTextFile(name);
-                addDescription(description, getX, getY, function);
+                addDescription(description, getRe, getIm, function);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -289,7 +295,8 @@ public class App extends Application {
         Button changeFractal = new Button("Julia Fractal");
         changeFractal.setOnAction(e -> {
             Optional<Pair<Double, Double>> result = dialog.showAndWait();
-            result.ifPresent((c) -> changeJulia(c.getKey(), c.getValue()));
+            result.ifPresent(c -> changeJulia(c.getKey(), c.getValue()));
+            
         });
 
         changeFractal.setVisible(true);
@@ -341,26 +348,12 @@ public class App extends Application {
 
             getFunction = fun.getSelected();
             if (cmd.hasOption("j")) {
-                Scanner sc = new Scanner(System.in);
-                // Parse args
-                System.out.println("Please enter X:");
-                String xa = sc.nextLine();
-                final Double x = Double.parseDouble(xa);
-                System.out.println("Please enter Y:");
-                String ya = sc.nextLine();
-                final double y = Double.parseDouble(ya);
-
-                sc.close();
-
                 // Print instructions
                 printInstructions();
 
                 // Launch app
                 Application.launch(App.class,
-                        "--function=" + getFunction,
-                        "--x=" + x,
-                        "--y=" + y);
-
+                        "--function=" + getFunction);
             }
 
             else if (cmd.hasOption("m")) {
