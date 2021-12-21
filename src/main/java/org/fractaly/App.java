@@ -11,6 +11,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -277,7 +280,13 @@ public class App extends Application {
         final String function = getFunction;
         final String name = getFunction + "_" + day + "_" + hour + "_" + minute;
 
-        button.setOnAction(e -> {
+        // For GUI controlled user input
+    
+        MenuBar menuBar = new MenuBar();
+        Menu menu = new Menu("Outils");
+        MenuItem menuItem1 = new MenuItem("Save");
+
+        menuItem1.setOnAction(e -> {
             try {
                 saveToFile(v.snapshot(null, fra), name);
                 File description = createTextFile(name);
@@ -286,24 +295,19 @@ public class App extends Application {
                 e1.printStackTrace();
             }
         });
-        button.setVisible(true);
-
-        // For GUI controlled user input
+        menu.getItems().add(menuItem1);
 
         Dialog<Pair<Double, Double>> dialog = JuliaDialog.getInstance();
-
-        Button changeFractal = new Button("Julia Fractal");
-        changeFractal.setOnAction(e -> {
+        MenuItem menuItem2 = new MenuItem("Julia Fractal");
+        
+        menuItem2.setOnAction(e -> {
             Optional<Pair<Double, Double>> result = dialog.showAndWait();
             result.ifPresent(c -> changeJulia(c.getKey(), c.getValue()));
-            
         });
+        menu.getItems().add(menuItem2);
+        menuBar.getMenus().add(menu);
 
-        changeFractal.setVisible(true);
-
-        stackPane.getChildren().add(button);
-        stackPane.getChildren().add(changeFractal);
-        StackPane.setAlignment(button, Pos.BOTTOM_CENTER);
+        root.getChildren().add(menuBar);
         root.getChildren().add(stackPane);
 
         addEventListeners(scene, stage);
