@@ -26,6 +26,7 @@ import java.time.Instant;
 import java.util.Calendar;
 import java.util.Scanner;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import javax.imageio.ImageIO;
 
@@ -59,6 +60,7 @@ public class App extends Application {
     private static void saveToFile(Image image, String name) throws IOException {
         File outputFile = new File(name);
         ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputFile);
+        System.out.println("An image was created: " + outputFile.getName()+"png");
     }
 
     private static File createTextFile(String name) {
@@ -222,7 +224,7 @@ public class App extends Application {
         Fractal f = null;
         switch (getFunction) {
             case "j":
-                Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(getX, getY));
+                UnaryOperator<Complex> julia = c -> c.multiply(c).add(Complex.build(getX, getY));
                 f = build.juliaFunction(julia).buildJulia();
                 break;
             case "m":
@@ -251,7 +253,7 @@ public class App extends Application {
 
         button.setOnAction(e -> {
             try {
-                saveToFile(fra, name);
+                saveToFile(v.snapshot(null, fra), name);
                 File description = createTextFile(name);
                 addDescription(description, getX, getY, function);
             } catch (IOException e1) {
@@ -373,8 +375,7 @@ public class App extends Application {
                         System.out.println("Please enter Y:");
                         String ya = sc.nextLine();
                         final double y = Double.parseDouble(ya);
-
-                        Function<Complex, Complex> julia = c -> c.multiply(c).add(Complex.build(x, y));
+                        UnaryOperator<Complex> julia = c -> c.multiply(c).add(Complex.build(x, y));
                         fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia();
 
                         name = "Julia_" + day + "_" + hour + "_" + minute;

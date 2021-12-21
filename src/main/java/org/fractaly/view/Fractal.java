@@ -98,7 +98,7 @@ public class Fractal extends WritableImage {
         public Builder(int w, int h) {
             this.w = w;
             this.h = h;
-            this.maxIter = 200; // Default values
+            this.maxIter = 350; // Default values
             this.zoom = 1.0;
             this.offsetX = 0;
             this.offsetY = 0;
