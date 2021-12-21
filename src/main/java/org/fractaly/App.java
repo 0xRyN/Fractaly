@@ -280,7 +280,7 @@ public class App extends Application {
         Fractal colorFractal = (Fractal) v.getImage();
         Fractal.Builder newBuilder = new Fractal.Builder(colorFractal).zoom(colorFractal.getZoom())
                 .offsetX(colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY());
-                
+
         String function = colorFractal.isMandelbrot() ? "MandelBrot" : "Julia";
         final String name = getFunction + "_" + day + "_" + hour + "_" + minute;
 
