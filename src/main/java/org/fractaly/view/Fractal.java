@@ -5,7 +5,6 @@ import javafx.scene.paint.Color;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import org.fractaly.model.ComputeFractal;
@@ -116,6 +115,7 @@ public class Fractal extends WritableImage {
             this.offsetY = data.offsetY;
             this.juliaFunction = data.juliaFunction;
             this.colorFunction = data.colorFunction;
+            
         }
 
         /**

@@ -5,47 +5,31 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Pair;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.ParsePosition;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import javax.imageio.ImageIO;
@@ -361,45 +345,32 @@ public class App extends Application {
         MenuItem menuItem13 = new MenuItem("Gray");
         MenuItem menuItem14 = new MenuItem("Red");
 
-        menuItem11.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                if(isMandelBrot()){
-                    changeMandelbrot(FractalColors.BLUE_SCALE);
-                }else{
-                    changeJulia(FractalColors.BLUE_SCALE);
-                }
-                
+        menuItem11.setOnAction(e -> {
+            if(isMandelBrot()){
+                changeMandelbrot(FractalColors.BLUE_SCALE);
+            }else{
+                changeJulia(FractalColors.BLUE_SCALE);
             }
         });
-        menuItem12.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                if (isMandelBrot()) {
-                    changeMandelbrot(FractalColors.GREEN_SCALE);
-                }else{
-                    changeJulia(FractalColors.GREEN_SCALE);
-                }
+        menuItem12.setOnAction(e -> {
+            if (isMandelBrot()) {
+                changeMandelbrot(FractalColors.GREEN_SCALE);
+            }else{
+                changeJulia(FractalColors.GREEN_SCALE);
             }
         });
-        menuItem13.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                if (isMandelBrot()) {
-                    changeMandelbrot(FractalColors.GRAY_SCALE);
-                } else {
-                    changeJulia(FractalColors.GRAY_SCALE);
-                }
+        menuItem13.setOnAction(e -> {
+            if (isMandelBrot()) {
+                changeMandelbrot(FractalColors.GRAY_SCALE);
+            } else {
+                changeJulia(FractalColors.GRAY_SCALE);
             }
         });
-        menuItem14.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                if (isMandelBrot()) {
-                    changeMandelbrot(FractalColors.RED_SCALE);
-                }else {
-                    changeJulia(FractalColors.RED_SCALE);
-                }
+        menuItem14.setOnAction(e -> {
+            if (isMandelBrot()) {
+                changeMandelbrot(FractalColors.RED_SCALE);
+            } else {
+                changeJulia(FractalColors.RED_SCALE);
             }
         });
 

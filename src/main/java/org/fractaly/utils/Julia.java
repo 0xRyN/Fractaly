@@ -1,9 +1,9 @@
 package org.fractaly.utils;
 
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class Julia {
+    private Julia(){}
 
     public static Integer compute(int maxIter, Complex c, UnaryOperator<Complex> function) {
         Complex z = c;
