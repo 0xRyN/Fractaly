@@ -4,26 +4,40 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Pair;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.ParsePosition;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Calendar;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Function;
 
@@ -40,6 +54,7 @@ import org.apache.commons.cli.ParseException;
 import org.fractaly.utils.Complex;
 import org.fractaly.utils.FractalColors;
 import org.fractaly.view.Fractal;
+import org.fractaly.view.JuliaDialog;
 import org.fractaly.view.Fractal.Builder;
 
 /**
@@ -47,7 +62,7 @@ import org.fractaly.view.Fractal.Builder;
  */
 public class App extends Application {
 
-    private static final int WIDTH = 674;
+    private static final int WIDTH = 1000;
     private static final int HEIGHT = 1000;
     private ImageView v;
 
@@ -91,6 +106,18 @@ public class App extends Application {
             e.printStackTrace();
             Thread.currentThread().interrupt();
         }
+    }
+
+    public void changeJulia(double re, double im) {
+        Fractal fract = (Fractal) v.getImage();
+        Instant before = Instant.now();
+        Fractal.Builder newBuilder = new Fractal.Builder(fract)
+                .juliaFunction(c -> c.multiply(c).add(Complex.build(re, im)));
+        Fractal f = null;
+        f = newBuilder.buildJulia();
+        v.setImage(f);
+        Duration d = Duration.between(before, Instant.now());
+        System.out.println("It took " + d.toString() + " to render.");
     }
 
     public void move(double offsetX, double offsetY) {
@@ -259,7 +286,20 @@ public class App extends Application {
         });
         button.setVisible(true);
 
+        // For GUI controlled user input
+
+        Dialog<Pair<Double, Double>> dialog = JuliaDialog.getInstance();
+
+        Button changeFractal = new Button("Julia Fractal");
+        changeFractal.setOnAction(e -> {
+            Optional<Pair<Double, Double>> result = dialog.showAndWait();
+            result.ifPresent((c) -> changeJulia(c.getKey(), c.getValue()));
+        });
+
+        changeFractal.setVisible(true);
+
         stackPane.getChildren().add(button);
+        stackPane.getChildren().add(changeFractal);
         StackPane.setAlignment(button, Pos.BOTTOM_CENTER);
         root.getChildren().add(stackPane);
 
