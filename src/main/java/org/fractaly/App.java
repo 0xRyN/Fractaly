@@ -29,6 +29,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Pair;
@@ -43,6 +44,7 @@ import java.time.Instant;
 import java.util.Calendar;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -133,6 +135,41 @@ public class App extends Application {
         Duration d = Duration.between(before, Instant.now());
         System.out.println("It took " + d.toString() + " to render.");
         getComplexe(re, im);
+    }
+
+    public void changeJulia(BiFunction<Integer, Integer, Color> color) {
+        Fractal fract = (Fractal) v.getImage();
+        Fractal.Builder newBuilder = new Fractal.Builder(fract).colorFunction(color);
+        Fractal f = null;
+        f = newBuilder.buildJulia();
+        v.setImage(f);        
+    }
+
+    public void changeMandelbrot() {
+        Fractal fract = (Fractal) v.getImage();
+        Instant before = Instant.now();
+        Fractal.Builder newBuilder = new Fractal.Builder(fract);
+        Fractal f = null;
+        f = newBuilder.buildMandelbrot();
+        v.setImage(f);
+        Duration d = Duration.between(before, Instant.now());
+        System.out.println("It took " + d.toString() + " to render.");
+    }
+
+    public void changeMandelbrot(BiFunction<Integer, Integer, Color> color) {
+        Fractal fract = (Fractal) v.getImage();
+        Instant before = Instant.now();
+        Fractal.Builder newBuilder = new Fractal.Builder(fract).colorFunction(color);
+        Fractal f = null;
+        f = newBuilder.buildMandelbrot();
+        v.setImage(f);
+        Duration d = Duration.between(before, Instant.now());
+        System.out.println("It took " + d.toString() + " to render.");
+    }
+
+    public boolean isMandelBrot() {
+        Fractal fract = (Fractal) v.getImage();
+        return fract.isMandelbrot() ? true : false;
     }
 
     public void move(double offsetX, double offsetY) {
@@ -277,11 +314,8 @@ public class App extends Application {
         Scene scene = new Scene(root, WIDTH, HEIGHT);
 
         final Fractal fra = f;
-        Fractal colorFractal = (Fractal) v.getImage();
-        Fractal.Builder newBuilder = new Fractal.Builder(colorFractal).zoom(colorFractal.getZoom())
-                .offsetX(colorFractal.getOffsetX()).offsetY(colorFractal.getOffsetY());
 
-        String function = colorFractal.isMandelbrot() ? "MandelBrot" : "Julia";
+        String function = isMandelBrot() ? "MandelBrot" : "Julia";
         final String name = getFunction + "_" + day + "_" + hour + "_" + minute;
 
         // For GUI controlled user input
@@ -300,7 +334,7 @@ public class App extends Application {
             }
         });
         menu.getItems().add(menuItem1);
-
+        
         Dialog<Pair<Double, Double>> dialog = JuliaDialog.getInstance();
         MenuItem menuItem2 = new MenuItem("Julia Fractal");
         
@@ -313,8 +347,7 @@ public class App extends Application {
 
         MenuItem menuItem3 = new MenuItem("MandelBrot");
         menuItem3.setOnAction(e -> {
-            v.setImage(newBuilder.buildMandelbrot());
-
+           changeMandelbrot();
         });
         menu.getItems().add(menuItem3);
 
@@ -328,40 +361,41 @@ public class App extends Application {
         menuItem11.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                if(colorFractal.isMandelbrot()){
-                    v.setImage(newBuilder.colorFunction(FractalColors.BLUE_SCALE).buildMandelbrot());
+                if(isMandelBrot()){
+                    changeMandelbrot(FractalColors.BLUE_SCALE);
                 }else{
-                    v.setImage(newBuilder.colorFunction(FractalColors.BLUE_SCALE).buildJulia());
+                    changeJulia(FractalColors.BLUE_SCALE);
                 }
+                
             }
         });
         menuItem12.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                if (colorFractal.isMandelbrot()) {
-                    v.setImage(newBuilder.colorFunction(FractalColors.GREEN_SCALE).buildMandelbrot());
-                } else {
-                    v.setImage(newBuilder.colorFunction(FractalColors.GREEN_SCALE).buildJulia());
+                if (isMandelBrot()) {
+                    changeMandelbrot(FractalColors.GREEN_SCALE);
+                }else{
+                    changeJulia(FractalColors.GREEN_SCALE);
                 }
             }
         });
         menuItem13.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                if (colorFractal.isMandelbrot()) {
-                    v.setImage(newBuilder.colorFunction(FractalColors.GRAY_SCALE).buildMandelbrot());
+                if (isMandelBrot()) {
+                    changeMandelbrot(FractalColors.GRAY_SCALE);
                 } else {
-                    v.setImage(newBuilder.colorFunction(FractalColors.GRAY_SCALE).buildJulia());
+                    changeJulia(FractalColors.GRAY_SCALE);
                 }
             }
         });
         menuItem14.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                if (colorFractal.isMandelbrot()) {
-                    v.setImage(newBuilder.colorFunction(FractalColors.RED_SCALE).buildMandelbrot());
-                } else {
-                    v.setImage(newBuilder.colorFunction(FractalColors.RED_SCALE).buildJulia());
+                if (isMandelBrot()) {
+                    changeMandelbrot(FractalColors.RED_SCALE);
+                }else {
+                    changeJulia(FractalColors.RED_SCALE);
                 }
             }
         });
