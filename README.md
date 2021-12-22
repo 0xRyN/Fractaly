@@ -19,7 +19,7 @@ Les fonctionnalitées implémentées sont:
 
 4. Changement de couleurs 
 
-5. Utilisation de ForkPool, Join ( Thread séparé )
+5. Utilisation de ForkJoinPool (Multithreading)
 
 6. Ensemble de MandelBrot / Julia
 
