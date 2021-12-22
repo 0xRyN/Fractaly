@@ -10,6 +10,8 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
 
 public class JuliaDialog {
+    // Hide the implicit constructor
+    private JuliaDialog(){}
 
     public static Dialog<Pair<Double, Double>> getInstance() {
         Dialog<Pair<Double, Double>> dialog = new Dialog<>();

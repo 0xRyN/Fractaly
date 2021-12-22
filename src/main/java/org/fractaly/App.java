@@ -104,12 +104,23 @@ public class App extends Application {
         }
     }
 
-    public void getComplexe(double re, double im){
+    /**
+     * It's just to get the Complex for  The file description
+     * @param re
+     * @param im
+     */
+    private void getComplexe(double re, double im){
         getRe = re;
         getIm = im;
     }
 
-    public void changeJulia(double re, double im) {
+    /**
+     * Change the image to Julia
+     * getNFunction: It's to assign the function to the file descriptor
+     * @param re
+     * @param im
+     */
+    private void changeJulia(double re, double im) {
         Fractal fract = (Fractal) v.getImage();
         Instant before = Instant.now();
         Fractal.Builder newBuilder = new Fractal.Builder(fract)
@@ -123,7 +134,12 @@ public class App extends Application {
         getNFunction = "Julia";
     }
 
-    public void changeJulia(BiFunction<Integer, Integer, Color> color) {
+    /**
+     * Change the image to a Julia set with Color
+     * getNFunction: It's to assign the function to the file descriptor
+     * @param color
+     */
+    private void changeJulia(BiFunction<Integer, Integer, Color> color) {
         Fractal fract = (Fractal) v.getImage();
         Fractal.Builder newBuilder = new Fractal.Builder(fract).colorFunction(color);
         Fractal f = null;
@@ -132,7 +148,10 @@ public class App extends Application {
         getNFunction = "Julia";      
     }
 
-    public void changeMandelbrot() {
+    /**
+     * Change the image to a Mandelbrot set
+     */
+    private void changeMandelbrot() {
         Fractal fract = (Fractal) v.getImage();
         Instant before = Instant.now();
         Fractal.Builder newBuilder = new Fractal.Builder(fract);
@@ -144,7 +163,11 @@ public class App extends Application {
         getNFunction = "MandelBrot";
     }
 
-    public void changeMandelbrot(BiFunction<Integer, Integer, Color> color) {
+    /**
+     * Change the actual image to a Mandelbrot set
+     * @param color Lets choose the color with the function created in FractalColors
+     */
+    private void changeMandelbrot(BiFunction<Integer, Integer, Color> color) {
         Fractal fract = (Fractal) v.getImage();
         Instant before = Instant.now();
         Fractal.Builder newBuilder = new Fractal.Builder(fract).colorFunction(color);
@@ -156,12 +179,16 @@ public class App extends Application {
         getNFunction = "MandelBrot";
     }
 
-    public boolean isMandelBrot() {
+    /**
+     * Check if the actual images is a MandelBrot Set
+     * @return
+     */
+    private boolean isMandelBrot() {
         Fractal fract = (Fractal) v.getImage();
         return fract.isMandelbrot();
     }
 
-    public void move(double offsetX, double offsetY) {
+    private void move(double offsetX, double offsetY) {
         Fractal fract = (Fractal) v.getImage();
         Instant before = Instant.now();
         // Adding old offset makes it not very intuitive
@@ -180,7 +207,11 @@ public class App extends Application {
         System.out.println("It took " + d.toString() + " to render.");
     }
 
-    public void zoom(boolean bool) {
+    /**
+     * Zoom function 
+     * @param bool true is for zoom in and false to zoom out
+     */
+    private void zoom(boolean bool) {
         Fractal fract = (Fractal) v.getImage();
         double zoomFactor = fract.getZoom();
         Instant before = Instant.now();
@@ -202,7 +233,12 @@ public class App extends Application {
         System.out.println("It took " + d.toString() + " to render.");
     }
 
-    public void addEventListeners(Scene scene, Stage stage) {
+    /**
+     * This function allows us to move around using our mouse
+     * @param scene
+     * @param stage
+     */
+    private void addEventListeners(Scene scene, Stage stage) {
 
         // For Zoom / Zoom out / Movement with mouse
         v.setOnMouseClicked( ev -> {
@@ -291,6 +327,7 @@ public class App extends Application {
         }
         v = new ImageView(f);
 
+        // Transform -j and -m at the begining
         if (getFunction.equals("j")) {
             getNFunction = "Julia";
         } else {
@@ -299,17 +336,15 @@ public class App extends Application {
 
         VBox root = new VBox();
         var stackPane = new StackPane(v);
-
         Scene scene = new Scene(root, WIDTH, HEIGHT);
-
         final Fractal fra = f;
 
         // For GUI controlled user input
     
         MenuBar menuBar = new MenuBar();
         Menu menu = new Menu("Outils");
-        MenuItem menuItem1 = new MenuItem("Save");
 
+        MenuItem menuItem1 = new MenuItem("Save");
         menuItem1.setOnAction(e -> {
             try {
                 String name = getNFunction + "_" + day + "_" + hour + "_" + minute;
@@ -339,6 +374,7 @@ public class App extends Application {
         menu.getItems().add(menuItem3);
 
 
+        /* Colors section */
         Menu subMenu = new Menu("Colors");
         MenuItem menuItem11 = new MenuItem("Blue");
         MenuItem menuItem12 = new MenuItem("Green");
@@ -374,18 +410,20 @@ public class App extends Application {
             }
         });
 
+        // Add Colors items to Colors sections
         subMenu.getItems().add(menuItem11);
         subMenu.getItems().add(menuItem12);
         subMenu.getItems().add(menuItem13);
         subMenu.getItems().add(menuItem14);
         menu.getItems().add(subMenu);
 
+        // Add the stackPanel for the image and the navbar at the top
         root.getChildren().add(menuBar);
         root.getChildren().add(stackPane);
 
         addEventListeners(scene, stage);
 
-        stage.setTitle("Image created with: " + getFunction);
+        stage.setTitle("Image created with: " + getNFunction);
         stage.setScene(scene);
         stage.show();
 
@@ -452,6 +490,7 @@ public class App extends Application {
 
         String name = "";
 
+        // Check if we are on the terminal
         if (cmd.hasOption("t")) {
             System.out.println("Welcome on the terminal!");
 
@@ -460,36 +499,46 @@ public class App extends Application {
             final int hour = now.get(Calendar.HOUR_OF_DAY);
             final int minute = now.get(Calendar.MINUTE);
 
+            // If we are on the Mandelbrot then build directly the MandelBrot set
             if (cmd.hasOption("m")) {
                 fract = new Fractal.Builder(WIDTH, HEIGHT).buildMandelbrot();
-
                 name = "MandelBrot_" + day + "_" + hour + "_" + minute;
+
+                // Create the image to PNG
                 File outputFile = new File(name);
                 ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
+
                 System.out.println("An image was created: " + outputFile.getName());
+
+                // Add the file descriptor
                 File description = createTextFile(outputFile.getName());
                 addDescription(description, .0, .0, "Mandelbrot");
             } else {
+                // Check if we got the -j (Julia option)
                 if (cmd.hasOption("j")) {
                     try (Scanner sc = new Scanner(System.in)) {
-                        System.out.println("Please enter X:");
+                        // Let's get X and 
+                        System.out.println("Please enter Re:");
                         String xa = sc.nextLine();
                         final Double x = Double.parseDouble(xa);
-                        System.out.println("Please enter Y:");
+                        System.out.println("Please enter Im:");
                         String ya = sc.nextLine();
                         final double y = Double.parseDouble(ya);
+
                         UnaryOperator<Complex> julia = c -> c.multiply(c).add(Complex.build(x, y));
                         fract = new Fractal.Builder(WIDTH, HEIGHT).juliaFunction(julia).buildJulia();
 
                         name = "Julia_" + day + "_" + hour + "_" + minute;
                         File outputFile = new File(name);
-
+                        // Let's create the image to PNG
                         ImageIO.write(SwingFXUtils.fromFXImage(fract, null), "png", outputFile);
                         System.out.println("An image was created: " + outputFile.getName());
+                        // Add the file descriptor
                         File description = createTextFile(outputFile.getName());
                         addDescription(description, x, y, "Julia");
                     }
                 } else {
+                    // Not an option
                     formatter.printHelp(AP_STRING, options, true);
                     throw new IllegalArgumentException();
                 }
