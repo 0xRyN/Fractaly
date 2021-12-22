@@ -59,8 +59,9 @@ A l'exécution, on pourra choisir dans l'interface graphique si on veut afficher
 
         Cette classe contient le main et c'est aussi le contrôleur.
         Il parse les arguments qu'on lui donne voir (3) à l'aide de apache-commons-cli.
-        On pourra ainsi choisir entre GUI ou Terminal.
-        Il contient tout ce qui est lié au terminal
+        On pourra ainsi choisir entre l'interface graphique ou 
+        bien l'utilisation de ligne de commande (alias terminal).
+        TERMINAL ->
             -> Scanner pour pouvoir récupèrer X et Y
             -> Option pour save les images
             -> Fichier de description
@@ -80,7 +81,7 @@ A l'exécution, on pourra choisir dans l'interface graphique si on veut afficher
     Nous aurions voulu avoir:
         - une meilleur modularité câd que le Contrôleur (App) aurait pu avoir des fonctions dans d'autre fichiers
         - ajouter d'autre informations dans le fichier texte comme:
-            - ZOOM utilisé
+            - la taille du ZOOM utilisé
             - Couleur utilisé (Fonction pointant vers une adresse lambda qlc ...)
             - Dernier déplacements
         - Trouver le threeshold parfait 
