@@ -1,13 +1,13 @@
 # RAPPORT DU PROJET FRACTALY
 
-## 1. (Identifiants)
+## 1. Identifiants
 
 > Membres du groupe:
 >
 > -   FOURMONT Baptiste: 21953237 Groupe 3
 > -   AL AZAWI RAYAN: 21959238 Groupe 3
 
-## 2. (Fonctionnalités)
+## 2. Fonctionnalités
 
 Nous avons ajoutées toutes les fonctions demandées.
 Voici, Les extensions implémentées:
@@ -32,7 +32,7 @@ Voici, Les extensions implémentées:
 
 10. API complète de Fractales, retournant une WritableImage, pouvant être utilisée dans d'autres programmes.
 
-## 3. (Compilation et exécution)
+## 3. Compilation et exécution
 
 Pour lancer le programme:
 ./run.sh [-g Show GUI, -t Use only terminal] [-m Use MandelBrot function, -j Use Julia function]
@@ -42,7 +42,7 @@ run-win.batch - Il ne prendra pas d'argument, et est équivalent à ./run.sh -g 
 
 A l'exécution, on pourra choisir dans l'interface graphique si on veut afficher une fonction Julia ou bien un Mandelbrot.
 
-## 4. (Découpage Modulaire)
+## 4. Découpage Modulaire
 
     Nous avons séparés  nos fichiers, pour décomposer notre application en plusieurs modules.
     1. Model
@@ -99,12 +99,12 @@ A l'exécution, on pourra choisir dans l'interface graphique si on veut afficher
         - BiFunction<Integer, Integer, Color> colorFunction (La fonction couleur)
     5.
 
-## 5. (Organisation du travail)
+## 5. Organisation du travail
 
     Nous nous sommes répartis les tâches en fonctions de notre emploi du temps et de notre intérêt particulier à certaines fonctions.
     Mais surtout, nous avons travaillé ensemble afin d'établir les meilleurs prototype de chaque fonction et nous avons compris ensemble l'intérêt principal de diviser chaque fonctionnalité en sous problème afin de mieux séparé les tâches et de pouvoir éviter tout bug.
 
-## 6. (Miscs)
+## 6. Miscs
 
     Nous aurions voulu avoir:
         - une meilleur modularité câd que le Contrôleur (App) aurait pu avoir des fonctions dans d'autre fichiers
