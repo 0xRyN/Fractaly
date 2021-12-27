@@ -49,4 +49,7 @@ public class FractalColors {
         return Color.rgb(0, 0, c);
     });
 
+    public static final BiFunction<Integer, Integer, Color> RAINBOW = ((iter, maxIter) -> Color
+            .hsb((255 * iter / maxIter) % 255, 1, iter < maxIter ? 1 : 0));
+
 }

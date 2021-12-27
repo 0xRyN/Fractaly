@@ -9,6 +9,7 @@ import java.util.function.UnaryOperator;
 
 import org.fractaly.model.ComputeFractal;
 import org.fractaly.utils.Complex;
+import org.fractaly.utils.FractalColors;
 
 public class Fractal extends WritableImage {
 
@@ -98,12 +99,12 @@ public class Fractal extends WritableImage {
         public Builder(int w, int h) {
             this.w = w;
             this.h = h;
-            this.maxIter = 350; // Default values
-            this.zoom = 1.0;
+            this.maxIter = 500; // Default values
+            this.zoom = 1;
             this.offsetX = 0;
             this.offsetY = 0;
-            this.juliaFunction = z -> z.multiply(z).add(Complex.build(-0.7, 0.27015)); // Default values
-            this.colorFunction = (i, maxI) -> Color.hsb((255 * i / maxI) % 360, 1, i < maxI ? 1 : 0); // Default values
+            this.juliaFunction = z -> z.multiply(z).add(Complex.build(-1.5, 0)); // Default values
+            this.colorFunction = FractalColors.RED_SCALE; // Default values
         }
 
         public Builder(Fractal data) {
@@ -115,7 +116,7 @@ public class Fractal extends WritableImage {
             this.offsetY = data.offsetY;
             this.juliaFunction = data.juliaFunction;
             this.colorFunction = data.colorFunction;
-            
+
         }
 
         /**

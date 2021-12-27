@@ -69,7 +69,7 @@ public class App extends Application {
     private static void saveToFile(Image image, String name) throws IOException {
         File outputFile = new File(name);
         ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputFile);
-        System.out.println("An image was created: " + outputFile.getName()+".png");
+        System.out.println("An image was created: " + outputFile.getName() + ".png");
     }
 
     private static File createTextFile(String name) {
@@ -105,11 +105,12 @@ public class App extends Application {
     }
 
     /**
-     * It's just to get the Complex for  The file description
+     * It's just to get the Complex for The file description
+     * 
      * @param re
      * @param im
      */
-    private void getComplexe(double re, double im){
+    private void getComplexe(double re, double im) {
         getRe = re;
         getIm = im;
     }
@@ -117,6 +118,7 @@ public class App extends Application {
     /**
      * Change the image to Julia
      * getNFunction: It's to assign the function to the file descriptor
+     * 
      * @param re
      * @param im
      */
@@ -137,6 +139,7 @@ public class App extends Application {
     /**
      * Change the image to a Julia set with Color
      * getNFunction: It's to assign the function to the file descriptor
+     * 
      * @param color
      */
     private void changeJulia(BiFunction<Integer, Integer, Color> color) {
@@ -144,8 +147,8 @@ public class App extends Application {
         Fractal.Builder newBuilder = new Fractal.Builder(fract).colorFunction(color);
         Fractal f = null;
         f = newBuilder.buildJulia();
-        v.setImage(f);  
-        getNFunction = "Julia";      
+        v.setImage(f);
+        getNFunction = "Julia";
     }
 
     /**
@@ -165,6 +168,7 @@ public class App extends Application {
 
     /**
      * Change the actual image to a Mandelbrot set
+     * 
      * @param color Lets choose the color with the function created in FractalColors
      */
     private void changeMandelbrot(BiFunction<Integer, Integer, Color> color) {
@@ -181,6 +185,7 @@ public class App extends Application {
 
     /**
      * Check if the actual images is a MandelBrot Set
+     * 
      * @return
      */
     private boolean isMandelBrot() {
@@ -208,7 +213,8 @@ public class App extends Application {
     }
 
     /**
-     * Zoom function 
+     * Zoom function
+     * 
      * @param bool true is for zoom in and false to zoom out
      */
     private void zoom(boolean bool) {
@@ -235,13 +241,14 @@ public class App extends Application {
 
     /**
      * This function allows us to move around using our mouse
+     * 
      * @param scene
      * @param stage
      */
     private void addEventListeners(Scene scene, Stage stage) {
 
         // For Zoom / Zoom out / Movement with mouse
-        v.setOnMouseClicked( ev -> {
+        v.setOnMouseClicked(ev -> {
             MouseButton gEvent = ev.getButton();
             switch (gEvent) {
                 default:
@@ -251,56 +258,56 @@ public class App extends Application {
                 case SECONDARY:
                     zoom(false);
                     break;
-                    /*
-                     * case MIDDLE:
-                     * double width = v.getBoundsInLocal().getWidth();
-                     * double centery = (WIDTH) / 2.0;
-                     * double centerx = (HEIGHT) / 2.0;
-                     * 
-                     * double scale = v.getBoundsInLocal().getHeight() / width;
-                     * double xOffset = scale * (centerx - mouseEvent.getX());
-                     * double yOffset = scale * (centery - mouseEvent.getY());
-                     * 
-                     * move(xOffset, yOffset);
-                     * break;
-                     */
+                /*
+                 * case MIDDLE:
+                 * double width = v.getBoundsInLocal().getWidth();
+                 * double centery = (WIDTH) / 2.0;
+                 * double centerx = (HEIGHT) / 2.0;
+                 * 
+                 * double scale = v.getBoundsInLocal().getHeight() / width;
+                 * double xOffset = scale * (centerx - mouseEvent.getX());
+                 * double yOffset = scale * (centery - mouseEvent.getY());
+                 * 
+                 * move(xOffset, yOffset);
+                 * break;
+                 */
             }
         });
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
-                if (ke.getCode() == KeyCode.UP) {
-                    move(0, -20);
-                    ke.consume(); // <-- stops passing the event to next node
-                }
+            if (ke.getCode() == KeyCode.UP) {
+                move(0, -20);
+                ke.consume(); // <-- stops passing the event to next node
+            }
 
-                else if (ke.getCode() == KeyCode.DOWN) {
-                    move(0, 20);
-                    ke.consume(); // <-- stops passing the event to next node
-                }
+            else if (ke.getCode() == KeyCode.DOWN) {
+                move(0, 20);
+                ke.consume(); // <-- stops passing the event to next node
+            }
 
-                else if (ke.getCode() == KeyCode.RIGHT) {
-                    move(20, 0);
-                    ke.consume(); // <-- stops passing the event to next node
-                }
+            else if (ke.getCode() == KeyCode.RIGHT) {
+                move(20, 0);
+                ke.consume(); // <-- stops passing the event to next node
+            }
 
-                else if (ke.getCode() == KeyCode.LEFT) {
-                    move(-20, 0);
-                    ke.consume(); // <-- stops passing the event to next node
-                }
+            else if (ke.getCode() == KeyCode.LEFT) {
+                move(-20, 0);
+                ke.consume(); // <-- stops passing the event to next node
+            }
 
-                else if (ke.getCode() == KeyCode.ENTER) {
-                    zoom(true);
-                    ke.consume(); // <-- stops passing the event to next node
-                }
+            else if (ke.getCode() == KeyCode.ENTER) {
+                zoom(true);
+                ke.consume(); // <-- stops passing the event to next node
+            }
 
-                else if (ke.getCode() == KeyCode.BACK_SPACE) {
-                    zoom(false);
-                    ke.consume(); // <-- stops passing the event to next node
-                }
+            else if (ke.getCode() == KeyCode.BACK_SPACE) {
+                zoom(false);
+                ke.consume(); // <-- stops passing the event to next node
+            }
         });
 
         // When window closes, close all threads and exit the program
-        stage.setOnCloseRequest( ev -> {
+        stage.setOnCloseRequest(ev -> {
             Platform.exit();
             System.exit(0);
         });
@@ -340,7 +347,7 @@ public class App extends Application {
         final Fractal fra = f;
 
         // For GUI controlled user input
-    
+
         MenuBar menuBar = new MenuBar();
         Menu menu = new Menu("Outils");
 
@@ -356,10 +363,10 @@ public class App extends Application {
             }
         });
         menu.getItems().add(menuItem1);
-        
+
         Dialog<Pair<Double, Double>> dialog = JuliaDialog.getInstance();
         MenuItem menuItem2 = new MenuItem("Julia Fractal");
-        
+
         menuItem2.setOnAction(e -> {
             Optional<Pair<Double, Double>> result = dialog.showAndWait();
             result.ifPresent(c -> changeJulia(c.getKey(), c.getValue()));
@@ -369,10 +376,9 @@ public class App extends Application {
 
         MenuItem menuItem3 = new MenuItem("MandelBrot");
         menuItem3.setOnAction(e -> {
-           changeMandelbrot();
+            changeMandelbrot();
         });
         menu.getItems().add(menuItem3);
-
 
         /* Colors section */
         Menu subMenu = new Menu("Colors");
@@ -380,18 +386,19 @@ public class App extends Application {
         MenuItem menuItem12 = new MenuItem("Green");
         MenuItem menuItem13 = new MenuItem("Gray");
         MenuItem menuItem14 = new MenuItem("Red");
+        MenuItem menuItem15 = new MenuItem("Rainbow");
 
         menuItem11.setOnAction(e -> {
-            if(isMandelBrot()){
+            if (isMandelBrot()) {
                 changeMandelbrot(FractalColors.BLUE_SCALE);
-            }else{
+            } else {
                 changeJulia(FractalColors.BLUE_SCALE);
             }
         });
         menuItem12.setOnAction(e -> {
             if (isMandelBrot()) {
                 changeMandelbrot(FractalColors.GREEN_SCALE);
-            }else{
+            } else {
                 changeJulia(FractalColors.GREEN_SCALE);
             }
         });
@@ -409,12 +416,20 @@ public class App extends Application {
                 changeJulia(FractalColors.RED_SCALE);
             }
         });
+        menuItem15.setOnAction(e -> {
+            if (isMandelBrot()) {
+                changeMandelbrot(FractalColors.RAINBOW);
+            } else {
+                changeJulia(FractalColors.RAINBOW);
+            }
+        });
 
         // Add Colors items to Colors sections
         subMenu.getItems().add(menuItem11);
         subMenu.getItems().add(menuItem12);
         subMenu.getItems().add(menuItem13);
         subMenu.getItems().add(menuItem14);
+        subMenu.getItems().add(menuItem15);
         menu.getItems().add(subMenu);
 
         // Add the stackPanel for the image and the navbar at the top
@@ -517,7 +532,7 @@ public class App extends Application {
                 // Check if we got the -j (Julia option)
                 if (cmd.hasOption("j")) {
                     try (Scanner sc = new Scanner(System.in)) {
-                        // Let's get X and 
+                        // Let's get X and
                         System.out.println("Please enter Re:");
                         String xa = sc.nextLine();
                         final Double x = Double.parseDouble(xa);
