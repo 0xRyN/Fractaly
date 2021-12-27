@@ -59,14 +59,22 @@ JuliaDialog -> Permet de créer une fonction Julia grâce à une boîte de dialo
 
 ### 3. Utils
 
-Complex -> Classe permettant de créer un Complexe
+#### Complex
 
-FractalColors -> Contient les fonctions de couleurs pour les Fractales. Nous disposons de 4 fonctions de couleurs.
+Classe permettant de créer un Complexe
+
+#### FractalColors
+
+Contient les fonctions de couleurs pour les Fractales. Nous disposons de 4 fonctions de couleurs.
 On utilisera cette classe pour pouvoir ajouter une couleur à notre fractale.
 
-Julia -> Classe permetant de créer une fonction de Julia
+#### Julia
 
-MandelBrot -> Classe permettant de créer un ensemble de Mandelbrot
+Classe permetant de créer une fonction de Julia
+
+#### MandelBrot
+
+Classe permettant de créer un ensemble de Mandelbrot
 
 ### 4. App.java
 
@@ -75,14 +83,14 @@ Il parse les arguments qu'on lui donne voir (3) à l'aide de apache-commons-cli.
 On pourra ainsi choisir entre l'interface graphique ou
 bien l'utilisation de ligne de commande (alias terminal).
 
-### TERMINAL :
+#### TERMINAL :
 
 -   Scanner pour pouvoir récupèrer X et Y
 -   Option pour save les images
 -   Fichier de description
 -   Créer un Mandelbrot/Julia
 
-### GUI : Fonctionnalités en temps réel
+#### GUI : Fonctionnalités en temps réel
 
 -   ZOOM / Déplacement / Déplacement exact avec la souris
 -   Couleurs en temps réel
