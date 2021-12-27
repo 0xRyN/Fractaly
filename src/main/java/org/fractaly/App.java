@@ -91,8 +91,10 @@ public class App extends Application {
 
     private static void printInstructions() {
         System.out.println("USAGE:");
-        System.out.println("[ZOOM]: LEFT CLICK / ENTER");
-        System.out.println("[UNZOOM]: RIGHT CLICK / BACKSPACE");
+        System.out.println("[ZOOM A LITTLE]: ENTER");
+        System.out.println("[ZOOM A TON AT SPECIFIC SPOT ON CLICK]: MOUSE LEFT CLICK");
+        System.out.println("[UNZOOM A LITTLE]: BACKSPACE");
+        System.out.println("[UNZOOM A TON AT SPECIFIC SPOT ON CLICK]: MOUSE RIGHT CLICK");
         System.out.println("[MOVE]: ARROW KEYS");
         System.out.println("You got five seconds to read this instructions...");
 
@@ -240,6 +242,48 @@ public class App extends Application {
     }
 
     /**
+     * Zoom function
+     * 
+     * @param bool true is for zoom in and false to zoom out
+     */
+    private void zoomMore(boolean bool) {
+        Fractal fract = (Fractal) v.getImage();
+        double zoomFactor = fract.getZoom();
+        Instant before = Instant.now();
+        if (bool) {
+            zoomFactor += 1;
+        } else {
+            zoomFactor -= 1;
+        }
+        Fractal.Builder newBuilder = new Fractal.Builder(fract).zoom(zoomFactor);
+        Fractal f = null;
+        if (fract.isMandelbrot()) {
+            f = newBuilder.buildMandelbrot();
+        } else {
+
+            f = newBuilder.buildJulia();
+        }
+        v.setImage(f);
+        Duration d = Duration.between(before, Instant.now());
+        System.out.println("It took " + d.toString() + " to render.");
+    }
+
+    /**
+     * Zoom function
+     * 
+     * @param bool true is for zoom in and false to zoom out
+     */
+    private void zoomMove(boolean bool, double offX, double offY) {
+        System.out.println("Moving to [" + offX + "; " + offY + "] and Zooming 10x");
+        Instant before = Instant.now();
+
+        move(offX, offY);
+        zoomMore(bool);
+        Duration d = Duration.between(before, Instant.now());
+        System.out.println("It took " + d.toString() + " to render.");
+    }
+
+    /**
      * This function allows us to move around using our mouse
      * 
      * @param scene
@@ -253,10 +297,26 @@ public class App extends Application {
             switch (gEvent) {
                 default:
                 case PRIMARY:
-                    zoom(true);
+                    double pwidth = v.getBoundsInLocal().getWidth();
+                    double pcentery = (WIDTH) / 2.0;
+                    double pcenterx = (HEIGHT) / 2.0;
+
+                    double pscale = v.getBoundsInLocal().getHeight() / pwidth;
+                    double pxOffset = pscale * (pcenterx - ev.getX());
+                    double pyOffset = pscale * (pcentery - ev.getY());
+
+                    zoomMove(true, -pxOffset, -pyOffset);
                     break;
                 case SECONDARY:
-                    zoom(false);
+                    double swidth = v.getBoundsInLocal().getWidth();
+                    double scentery = (WIDTH) / 2.0;
+                    double scenterx = (HEIGHT) / 2.0;
+
+                    double sscale = v.getBoundsInLocal().getHeight() / swidth;
+                    double sxOffset = sscale * (scenterx - ev.getX());
+                    double syOffset = sscale * (scentery - ev.getY());
+
+                    zoomMove(false, -sxOffset, -syOffset);
                     break;
                 /*
                  * case MIDDLE:
@@ -276,22 +336,22 @@ public class App extends Application {
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
             if (ke.getCode() == KeyCode.UP) {
-                move(0, -20);
+                move(0, -50);
                 ke.consume(); // <-- stops passing the event to next node
             }
 
             else if (ke.getCode() == KeyCode.DOWN) {
-                move(0, 20);
+                move(0, 50);
                 ke.consume(); // <-- stops passing the event to next node
             }
 
             else if (ke.getCode() == KeyCode.RIGHT) {
-                move(20, 0);
+                move(50, 0);
                 ke.consume(); // <-- stops passing the event to next node
             }
 
             else if (ke.getCode() == KeyCode.LEFT) {
-                move(-20, 0);
+                move(-50, 0);
                 ke.consume(); // <-- stops passing the event to next node
             }
 

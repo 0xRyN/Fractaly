@@ -92,8 +92,9 @@ public class ComputeFractal extends RecursiveAction {
     // https://docs.oracle.com/javase/tutorial/essential/concurrency/examples/ForkBlur.java
     @Override
     protected void compute() {
-        //System.out.println(
-        //        "Task no : " + threads + " given to Thread Pool - Start : " + start + ", End: " + (start + size));
+        // System.out.println(
+        // "Task no : " + threads + " given to Thread Pool - Start : " + start + ", End:
+        // " + (start + size));
         if (size <= threshold) {
             computeDirectly();
             return;
