@@ -75,21 +75,21 @@ Il parse les arguments qu'on lui donne voir (3) à l'aide de apache-commons-cli.
 On pourra ainsi choisir entre l'interface graphique ou
 bien l'utilisation de ligne de commande (alias terminal).
 
-TERMINAL ->
+### TERMINAL :
 
--> Scanner pour pouvoir récupèrer X et Y
--> Option pour save les images
--> Fichier de description
--> Créer un Mandelbrot/Julia
+-   Scanner pour pouvoir récupèrer X et Y
+-   Option pour save les images
+-   Fichier de description
+-   Créer un Mandelbrot/Julia
 
-GUI -> Fonctionnalités en temps réel
+### GUI : Fonctionnalités en temps réel
 
--> ZOOM / Déplacement / Déplacement exact avec la souris
--> Couleurs en temps réel
--> Génrérer une fractal selon le réel et l'imaginaire donné
--> Save et fichier de description
+-   ZOOM / Déplacement / Déplacement exact avec la souris
+-   Couleurs en temps réel
+-   Génrérer une fractal selon le réel et l'imaginaire donné
+-   Save et fichier de description
 
-NOTE : Même si le controlleur ne permet pas de tout modifier, l'API des fractales est complète.
+**NOTE : Même si le controlleur ne permet pas de tout modifier, l'API des fractales est complète.**
 
 Il est donc très facile d'ajouter des fonctionnalités GUI au controlleur.
 
