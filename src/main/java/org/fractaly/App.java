@@ -96,6 +96,8 @@ public class App extends Application {
         System.out.println("[UNZOOM A LITTLE]: BACKSPACE");
         System.out.println("[UNZOOM A TON AT SPECIFIC SPOT ON CLICK]: MOUSE RIGHT CLICK");
         System.out.println("[MOVE]: ARROW KEYS");
+        System.out.println("[NOTE] Not every functionnality has a controller, but the Fractal API is complete.");
+        System.out.println("[NOTE] Controllers can be added easily thanks to the API. Check the App.java controller !");
         System.out.println("You got five seconds to read this instructions...");
 
         try {
