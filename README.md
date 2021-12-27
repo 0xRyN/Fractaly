@@ -114,11 +114,23 @@ Tous ces paramètres sont modifiables :
 ## 5. Organisation du travail
 
 Nous nous sommes répartis les tâches en fonctions de notre emploi du temps et de notre intérêt particulier à certaines fonctions.
+
 Mais surtout, nous avons travaillé ensemble afin d'établir les meilleurs prototype de chaque fonction et nous avons compris ensemble l'intérêt principal de diviser chaque fonctionnalité en sous problème afin de mieux séparé les tâches et de pouvoir éviter tout bug.
 
 ## 6. Miscs
 
-Nous aurions voulu avoir: - une meilleur modularité câd que le Contrôleur (App) aurait pu avoir des fonctions dans d'autre fichiers - ajouter d'autre informations dans le fichier texte comme: - la taille du ZOOM utilisé - Couleur utilisé (Fonction pointant vers une adresse lambda qlc ...) - Dernier déplacements - Trouver le threeshold parfait : en effet, créer des Task de ForkJoinPool prend du temps. Il suffit de trouver
-l'équilibre parfait du nombre de pixels à donner à chaque Task. (ForkJoinPool est légèrement moins rapide que du
-threading classique, car il crée beaucoup de taches, et serait plus adapté sur des images de très grande résolution)
--Un smart contract Solidity pour générer des Fractales NFT
+Nous aurions voulu avoir:
+
+-   Une meilleur modularité câd que le Contrôleur (App) aurait pu avoir des fonctions dans d'autre fichiers
+
+-   Ajouter d'autre informations dans le fichier texte comme:
+
+    -   la taille du ZOOM utilisé
+    -   Couleur utilisé (Fonction pointant vers une adresse lambda qlc ...)
+    -   Dernier déplacements
+
+-   Trouver le threeshold parfait : en effet, créer des Task de ForkJoinPool prend du temps. Il suffit de trouver
+    l'équilibre parfait du nombre de pixels à donner à chaque Task. (ForkJoinPool est légèrement moins rapide que du
+    threading classique, car il crée beaucoup de taches, et serait plus adapté sur des images de très grande résolution)
+
+-   Un smart contract Solidity pour générer des Fractales NFT
