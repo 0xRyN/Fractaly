@@ -48,59 +48,68 @@ Nous avons séparés nos fichiers, pour décomposer notre application en plusieu
 
 ### 1. Model
 
-    ComputeFractal -> Permet de Calculer les fractales à l'aide du Multithreading ForkJoinPool.
+ComputeFractal -> Permet de Calculer les fractales à l'aide du Multithreading ForkJoinPool.
 
 ### 2. Views
 
-    Fractal -> Classe content l'objet Fractal celle-ci étend WritableImage. On calcule une fractale à l'aide de ComputeFractal ( MultiThreading).
-    Et on affiche celle-ci.
+Fractal -> Classe content l'objet Fractal celle-ci étend WritableImage. On calcule une fractale à l'aide de ComputeFractal ( MultiThreading).
+Et on affiche celle-ci.
 
-    JuliaDialog -> Permet de créer une fonction Julia grâce à une boîte de dialogue celle ci prends une Paire(Réel,Image) (Complexe) et la renvoie.
+JuliaDialog -> Permet de créer une fonction Julia grâce à une boîte de dialogue celle ci prends une Paire(Réel,Image) (Complexe) et la renvoie.
 
 ### 3. Utils
 
 Complex -> Classe permettant de créer un Complexe
 
-    FractalColors -> Contient les fonctions de couleurs pour les Fractales. Nous disposons de 4 fonctions de couleurs.
-    On utilisera cette classe pour pouvoir ajouter une couleur à notre fractale.
+FractalColors -> Contient les fonctions de couleurs pour les Fractales. Nous disposons de 4 fonctions de couleurs.
+On utilisera cette classe pour pouvoir ajouter une couleur à notre fractale.
 
-    Julia -> Classe permetant de créer une fonction de Julia
+Julia -> Classe permetant de créer une fonction de Julia
 
-    MandelBrot -> Classe permettant de créer un ensemble de Mandelbrot
+MandelBrot -> Classe permettant de créer un ensemble de Mandelbrot
 
 ### 4. App.java
 
-    Cette classe contient le main et c'est aussi le contrôleur.
-    Il parse les arguments qu'on lui donne voir (3) à l'aide de apache-commons-cli.
-    On pourra ainsi choisir entre l'interface graphique ou
-    bien l'utilisation de ligne de commande (alias terminal).
-    TERMINAL ->
-    -> Scanner pour pouvoir récupèrer X et Y
-    -> Option pour save les images
-    -> Fichier de description
-    -> Créer un Mandelbrot/Julia
-    GUI -> Fonctionnalités en temps réel
-    -> ZOOM / Déplacement / Déplacement exact avec la souris
-    -> Couleurs en temps réel
-    -> Génrérer une fractal selon le réel et l'imaginaire donné
-    -> Save et fichier de description
+Cette classe contient le main et c'est aussi le contrôleur.
+Il parse les arguments qu'on lui donne voir (3) à l'aide de apache-commons-cli.
+On pourra ainsi choisir entre l'interface graphique ou
+bien l'utilisation de ligne de commande (alias terminal).
 
-    NOTE : Même si le controlleur ne permet pas de tout modifier, l'API des fractales est complète.
-    Il est donc très facile d'ajouter des fonctionnalités GUI au controlleur.
-    Il suffit d'appeller le Builder avec les paramètres qu'on souhaite (cf zoom ou changeJulia par ex dans App.java).
-    La fonction de clonage est déjà faite : Fractal.Builder(fract).zoom(2) permet de dupliquer fract et de spécifier son zoom a 2.
-    Tous les paramètres ne sont pas requis, des valeurs par défaut sont spécifiées.
-    Tous ces paramètres sont modifiables :
+TERMINAL ->
 
-    - int w (Largeur)
-    - int h (Hauteur)
-      (La hauteur et la largeur permettent de déterminer le pas et le repère complexe.)
-    - int maxIter (Max itérations)
-    - double zoom (Zoom)
-    - double offsetX (Deplacement horizontal)
-    - double offsetY (Deplacement vertical)
-    - UnaryOperator<Complex> juliaFunction (La fonction Julia si applicable)
-    - BiFunction<Integer, Integer, Color> colorFunction (La fonction couleur)
+-> Scanner pour pouvoir récupèrer X et Y
+-> Option pour save les images
+-> Fichier de description
+-> Créer un Mandelbrot/Julia
+
+GUI -> Fonctionnalités en temps réel
+
+-> ZOOM / Déplacement / Déplacement exact avec la souris
+-> Couleurs en temps réel
+-> Génrérer une fractal selon le réel et l'imaginaire donné
+-> Save et fichier de description
+
+NOTE : Même si le controlleur ne permet pas de tout modifier, l'API des fractales est complète.
+
+Il est donc très facile d'ajouter des fonctionnalités GUI au controlleur.
+
+Il suffit d'appeller le Builder avec les paramètres qu'on souhaite (cf zoom ou changeJulia par ex dans App.java).
+
+La fonction de clonage est déjà faite : Fractal.Builder(fract).zoom(2) permet de dupliquer fract et de spécifier son zoom a 2.
+
+Tous les paramètres ne sont pas requis, des valeurs par défaut sont spécifiées.
+
+Tous ces paramètres sont modifiables :
+
+-   int w (Largeur)
+-   int h (Hauteur)
+    (La hauteur et la largeur permettent de déterminer le pas et le repère complexe.)
+-   int maxIter (Max itérations)
+-   double zoom (Zoom)
+-   double offsetX (Deplacement horizontal)
+-   double offsetY (Deplacement vertical)
+-   UnaryOperator<Complex> juliaFunction (La fonction Julia si applicable)
+-   BiFunction<Integer, Integer, Color> colorFunction (La fonction couleur)
 
 ## 5. Organisation du travail
 
